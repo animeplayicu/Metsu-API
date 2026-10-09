@@ -68,6 +68,7 @@
         <a class="nav-item" href="#watch-kaa"><span class="method">GET</span>KickAssAnime</a>
         <a class="nav-item" href="#watch-animedunya"><span class="method">GET</span>AnimeDunya</a>
         <a class="nav-item" href="#watch-animeonsen"><span class="method">GET</span>AnimeOnsen</a>
+        <a class="nav-item" href="#watch-anipm"><span class="method">GET</span>AniPM</a>
       </div>
     </div>
   </nav>
@@ -116,6 +117,7 @@
         <div class="provider-card" style="--i:12"><div class="provider-name">kaa</div><div class="provider-meta">KickAssAnime</div></div>
         <div class="provider-card" style="--i:13"><div class="provider-name">animedunya</div><div class="provider-meta">AnimeDunya</div></div>
         <div class="provider-card" style="--i:14"><div class="provider-name">animeonsen</div><div class="provider-meta">AnimeOnsen</div></div>
+        <div class="provider-card" style="--i:15"><div class="provider-name">anipm</div><div class="provider-meta">AniPM</div></div>
       </div>
     </section>
 
@@ -632,6 +634,49 @@
       <span class="n">"server"</span><span class="p">:</span> <span class="s">"AnimeOnsen"</span><span class="p">,</span>
       <span class="n">"headers"</span><span class="p">:</span> <span class="p">{</span> <span class="n">"Authorization"</span><span class="p">:</span> <span class="s">"Bearer &lt;session-token&gt;"</span> <span class="p">},</span>
       <span class="n">"subtitles"</span><span class="p">:</span> <span class="p">[</span> <span class="p">{</span> <span class="n">"url"</span><span class="p">:</span> <span class="s">"https://api.animeonsen.xyz/v4/subtitles/..."</span> <span class="p">}</span> <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span></code></pre>
+      </div>
+    </section>
+
+    <section class="section" id="watch-anipm">
+      <h2>AniPM</h2>
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method-pill get">GET</span>
+          <span class="endpoint-path">/watch/anipm/<span class="param">:id</span>/<span class="param">sub|dub</span>/anipm-<span class="param">:ep</span></span>
+          <a class="try-btn" href="/watch/anipm/21/sub/anipm-1" target="_blank">Try it ↗</a>
+        </div>
+        <div class="endpoint-body">
+          <p class="endpoint-desc">Returns master HLS streams, VTT subtitles, and intro/outro timestamps extracted via MegaPlay with direct AniList identity resolution from ani.pm.</p>
+          <table class="params-table">
+            <thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="param-name">:id</td><td class="param-type">integer</td><td class="param-desc">AniList media ID</td></tr>
+              <tr><td class="param-name">sub|dub</td><td class="param-type">string</td><td class="param-desc">Audio track language (<code>sub</code> or <code>dub</code>)</td></tr>
+              <tr><td class="param-name">:ep</td><td class="param-type">integer</td><td class="param-desc">Episode number</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-label">Response</div>
+        <pre><code><span class="p">{</span>
+  <span class="n">"anilistId"</span><span class="p">:</span> <span class="b">21</span><span class="p">,</span>
+  <span class="n">"malId"</span><span class="p">:</span>     <span class="b">21</span><span class="p">,</span>
+  <span class="n">"episode"</span><span class="p">:</span>   <span class="b">1</span><span class="p">,</span>
+  <span class="n">"audio"</span><span class="p">:</span>     <span class="s">"sub"</span><span class="p">,</span>
+  <span class="n">"stream_url"</span><span class="p">:</span> <span class="s">"https://fetch.nexabloom.top/anime/.../master.m3u8"</span><span class="p">,</span>
+  <span class="n">"proxied_stream_url"</span><span class="p">:</span> <span class="s">"/proxy?url=https%3A%2F%2Ffetch.nexabloom.top%2Fanime%2F..."</span><span class="p">,</span>
+  <span class="n">"intro"</span><span class="p">:</span> <span class="p">{</span> <span class="n">"start"</span><span class="p">:</span> <span class="b">0</span><span class="p">,</span> <span class="n">"end"</span><span class="p">:</span> <span class="b">109</span> <span class="p">},</span>
+  <span class="n">"outro"</span><span class="p">:</span> <span class="p">{</span> <span class="n">"start"</span><span class="p">:</span> <span class="b">1375</span><span class="p">,</span> <span class="n">"end"</span><span class="p">:</span> <span class="b">1442</span> <span class="p">},</span>
+  <span class="n">"streams"</span><span class="p">: [</span>
+    <span class="p">{</span>
+      <span class="n">"url"</span><span class="p">:</span> <span class="s">"https://fetch.nexabloom.top/anime/.../master.m3u8"</span><span class="p">,</span>
+      <span class="n">"proxied_url"</span><span class="p">:</span> <span class="s">"/proxy?url=https%3A%2F%2Ffetch.nexabloom.top%2Fanime%2F..."</span><span class="p">,</span>
+      <span class="n">"type"</span><span class="p">:</span> <span class="s">"hls"</span><span class="p">,</span>
+      <span class="n">"server"</span><span class="p">:</span> <span class="s">"MegaPlay"</span><span class="p">,</span>
+      <span class="n">"priority"</span><span class="p">:</span> <span class="b">5</span><span class="p">,</span>
+      <span class="n">"isActive"</span><span class="p">:</span> <span class="b">true</span>
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">}</span></code></pre>

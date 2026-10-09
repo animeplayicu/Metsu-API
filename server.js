@@ -11,19 +11,10 @@ const BASE  = process.env.BASE_PATH ?? "";
 const __dir = dirname(fileURLToPath(import.meta.url));
 
 const STATIC = {
-  "/":                   { file: "docs/landing.html", mime: "text/html" },
-  "/docs":               { file: "docs/index.html",   mime: "text/html" },
-  "/style.css":          { file: "docs/style.css",    mime: "text/css"  },
-  "/logo.svg":           { file: "docs/logo.svg",     mime: "image/svg+xml" },
-  "/gojoembed":          { file: "gojoembed/index.html", mime: "text/html" },
-  "/gojoembed/":         { file: "gojoembed/index.html", mime: "text/html" },
-  "/gojoembed/embed":    { file: "gojoembed/embed.html", mime: "text/html" },
-  "/gojoembed/style.css":{ file: "gojoembed/assets/css/style.css",  mime: "text/css"  },
-  "/gojoembed/player.js":{ file: "gojoembed/assets/js/player.js", mime: "application/javascript" },
-  "/gojoembed/red-theme.css": { file: "gojoembed/themes/red-theme.css", mime: "text/css" },
-  "/red-theme.css":      { file: "gojoembed/themes/red-theme.css", mime: "text/css" },
-  "/skin":               { file: "gojoembed/embed.html", mime: "text/html" },
-  "/skin/":              { file: "gojoembed/embed.html", mime: "text/html" },
+  "/":          { file: "docs/landing.html", mime: "text/html" },
+  "/docs":      { file: "docs/index.html",   mime: "text/html" },
+  "/style.css": { file: "docs/style.css",    mime: "text/css"  },
+  "/logo.svg":  { file: "docs/logo.svg",     mime: "image/svg+xml" },
 };
 
 function serveStatic(res, entry) {

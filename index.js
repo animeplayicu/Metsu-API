@@ -15,9 +15,11 @@ import kaaHandler                  from "./providers/kickassanime.js";
 import animedunyaHandler           from "./providers/animedunya.js";
 import animeonsenHandler           from "./providers/animeonsen.js";
 import shiroHandler                from "./providers/shiro.js";
+import anipmHandler                from "./providers/anipm.js";
+import piratexplayHandler         from "./providers/piratexplay.js";
 import { getEpisodesResponse, getFilteredEpisodesResponse } from "./core/episode-cache.js";
 import { resolveProviders }         from "./core/episode-strategy.js";
-import { getAsync, setAsync, isFresh, mapTTL, WATCH_TTL, _CACHE_ENABLED } from "./core/smartcache.js";
+import { getAsync, setAsync, isFresh, mapTTL, WATCH_TTL, PIRATEXPLAY_WATCH_TTL, _CACHE_ENABLED } from "./core/smartcache.js";
 import proxyHandler from "./proxy/_worker.js";
 
 function json(data, status = 200) {
@@ -182,6 +184,11 @@ export default {
       return animeggHandler.fetch(request);
     }
 
+    m = path.match(/^\/stream\/anipm\/(\d+)\/(sub|dub)\/(\d+)\/?$/);
+    if (m) {
+      return anipmHandler.fetch(request);
+    }
+
     m = path.match(/^\/watch\/anikoto\/(\d+)\/(sub|dub)\/anikoto-(\d+)\/?$/);
     if (m) {
       const [, id, audio, ep] = m;
@@ -301,6 +308,26 @@ export default {
       );
     }
 
+    m = path.match(/^\/watch\/anipm\/(\d+)\/(sub|dub)\/anipm-(\d+)\/?$/);
+    if (m) {
+      const [, id, audio, ep] = m;
+      return cachedWatch(
+        `watch:anipm:${id}:${audio}:${ep}`,
+        () => anipmHandler.fetch(request),
+        SIGNED_STREAM_WATCH_TTL
+      );
+    }
+
+    m = path.match(/^\/watch\/piratexplay\/(\d+)\/(sub|dub|multi)\/piratexplay-(.+)\/?$/);
+    if (m) {
+      const [, id, audio, ep] = m;
+      return cachedWatch(
+        `watch:piratexplay:${id}:${audio}:${ep}`,
+        () => piratexplayHandler.fetch(request),
+        PIRATEXPLAY_WATCH_TTL
+      );
+    }
+
     return json({
       name: "Metsu API 2.2.1",
       cache: _CACHE_ENABLED,
@@ -320,6 +347,8 @@ export default {
         "animedunya",
         "animeonsen",
         "shiro",
+        "anipm",
+        "piratexplay",
       ],
       routes: [
         "/map/:anilistId",
@@ -341,6 +370,9 @@ export default {
         "/watch/animedunya/:id/sub|dub/animedunya-:ep",
         "/watch/animeonsen/:id/sub|dub/animeonsen-:ep",
         "/watch/shiro/:id/sub|dub|hsub/shiro-:ep",
+        "/watch/anipm/:id/sub|dub/anipm-:ep",
+        "/stream/anipm/:id/sub|dub/:ep",
+        "/watch/piratexplay/:id/sub|dub|multi/piratexplay-:ep",
       ],
     });
   },

@@ -39,6 +39,7 @@ It's the backbone powering **[Anivexa](https://github.com/walterwhite-69/Anivexa
 | **Kickassanime** | ✅ Active | Fuzzy search, medium library |
 | **AnimeDunya** | ✅ Active | HLS + subtitles, sub-only, MAL ID backed |
 | **AnimeOnsen** | ✅ Active | DASH + subtitles, sub-only, AniList/MAL identity verified |
+| **AniPM** | ✅ Active | Native REST API, AniList ID backed, MegaPlay HLS + subtitles + intro/outro |
 
 ---
 

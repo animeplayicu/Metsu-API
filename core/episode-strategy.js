@@ -17,6 +17,8 @@ import { getEpisodes as kaaEpisodes    } from "../providers/kickassanime.js";
 import { getEpisodes as animedunyaEpisodes } from "../providers/animedunya.js";
 import { getEpisodes as animeonsenEpisodes } from "../providers/animeonsen.js";
 import { getEpisodes as shiroEpisodes }      from "../providers/shiro.js";
+import { getEpisodes as anipmEpisodes }      from "../providers/anipm.js";
+import { getEpisodes as piratexplayEpisodes } from "../providers/piratexplay.js";
 const inflight  = new Map();
 const bgRunning = new Set();
 
@@ -92,6 +94,11 @@ const PROVIDER_ALIASES = {
   animedunya: "animedunya",
   animeonsen: "animeonsen",
   shiro: "shiro",
+  anipm: "anipm",
+  ani:   "anipm",
+  piratexplay: "piratexplay",
+  pxp: "piratexplay",
+  pirate: "piratexplay",
 };
 
 export function resolveProviders(rawNames) {
@@ -122,6 +129,8 @@ function providerFns(anilistId, status, ctx) {
     animedunya: () => withCache(`epv:animedunya:${anilistId}`, status, () => animedunyaEpisodes(anilistId, ctx)),
     animeonsen: () => withCache(`epv:animeonsen:${anilistId}`, status, () => animeonsenEpisodes(anilistId, ctx)),
     shiro:      () => withCache(`epv:shiro:${anilistId}`,      status, () => shiroEpisodes(anilistId, ctx)),
+    anipm:      () => withCache(`epv:anipm:${anilistId}`,      status, () => anipmEpisodes(anilistId, ctx)),
+    piratexplay: () => withCache(`epv:piratexplay:${anilistId}`, status, () => piratexplayEpisodes(anilistId, ctx)),
   };
 }
 
@@ -144,7 +153,7 @@ export async function buildEpisodesWithCache(anilistId, media, anizip) {
   const status = media?.status ?? "RELEASING";
   const ctx = { media, anizip, maxPages: undefined };
 
-  const [mkissa, reanime, anikoto, animegg, anineko, anidbapp, animenosub, anizone, aniwaves, anibd, senshi, kaa, animedunya, animeonsen, shiro] = await Promise.all([
+  const [mkissa, reanime, anikoto, animegg, anineko, anidbapp, animenosub, anizone, aniwaves, anibd, senshi, kaa, animedunya, animeonsen, shiro, anipm, piratexplay] = await Promise.all([
     safe("mkissa",     () => withCache(`epv:mkissa:${anilistId}`,     status, () => mkissaEpisodes(anilistId, ctx))),
     safe("reanime",    () => withCache(`epv:reanime:${anilistId}`,    status, () => reanimeEpisodes(anilistId, ctx))),
     safe("anikoto",    () => withCache(`epv:anikoto:${anilistId}`,    status, () => anikotoEpisodes(anilistId, ctx))),
@@ -160,6 +169,8 @@ export async function buildEpisodesWithCache(anilistId, media, anizip) {
     safe("animedunya", () => withCache(`epv:animedunya:${anilistId}`, status, () => animedunyaEpisodes(anilistId, ctx))),
     safe("animeonsen", () => withCache(`epv:animeonsen:${anilistId}`, status, () => animeonsenEpisodes(anilistId, ctx))),
     safe("shiro",      () => withCache(`epv:shiro:${anilistId}`,      status, () => shiroEpisodes(anilistId, ctx))),
+    safe("anipm",      () => withCache(`epv:anipm:${anilistId}`,      status, () => anipmEpisodes(anilistId, ctx))),
+    safe("piratexplay",() => withCache(`epv:piratexplay:${anilistId}`,status, () => piratexplayEpisodes(anilistId, ctx))),
   ]);
 
   return {
@@ -167,7 +178,7 @@ export async function buildEpisodesWithCache(anilistId, media, anizip) {
     reanime:     reanime.ok     ? reanime.data     : { error: reanime.error,     stack: reanime.stack },
     anikoto:     anikoto.ok     ? anikoto.data     : { error: anikoto.error,     stack: anikoto.stack },
     animegg:     animegg.ok     ? animegg.data     : { error: animegg.error,     stack: animegg.stack },
-    anineko:     anineko.ok     ? anineko.data     : { error: anineko.error,     stack: anineko.stack },
+    anineko:     anineko.ok     ? anineko.data     : { error: animeko.error,     stack: anineko.stack },
     anidbapp:    anidbapp.ok    ? anidbapp.data    : { error: anidbapp.error,    stack: anidbapp.stack },
     animenosub:  animenosub.ok  ? animenosub.data  : { error: animenosub.error,  stack: animenosub.stack },
     anizone:     anizone.ok     ? anizone.data     : { error: anizone.error,     stack: anizone.stack },
@@ -178,5 +189,8 @@ export async function buildEpisodesWithCache(anilistId, media, anizip) {
     animedunya:  animedunya.ok  ? animedunya.data  : { error: animedunya.error,  stack: animedunya.stack },
     animeonsen:  animeonsen.ok  ? animeonsen.data  : { error: animeonsen.error,  stack: animeonsen.stack },
     shiro:       shiro.ok       ? shiro.data       : { error: shiro.error,       stack: shiro.stack },
+    anipm:       anipm.ok       ? anipm.data       : { error: anipm.error,       stack: anipm.stack },
+    piratexplay: piratexplay.ok ? piratexplay.data : { error: piratexplay.error, stack: piratexplay.stack },
   };
 }
+
