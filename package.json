@@ -4,8 +4,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "embed": "node serve-gojo.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

@@ -444,6 +444,7 @@ export async function handleWatch(anilistId, audio, epParam, ctx = {}) {
         episode: epNum,
         audio,
         stream_url: topStream?.url || null,
+        proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
         stream_type: topStream?.type || "embed",
         streams: uniqueStreams
       },
@@ -471,25 +472,7 @@ async function extractDirectMediaStreams(streams) {
   for (const item of streams) {
     const rawUrl = item.url;
 
-    if (canExtractRavok(rawUrl)) {
-      tasks.push(
-        extractRavok(rawUrl)
-          .then(res => {
-            if (res?.streamUrl) {
-              directStreams.push({
-                url: res.streamUrl,
-                type: "hls",
-                server: `${item.server} (Direct Master HLS)`,
-                poster: res.poster || null,
-                referer: "https://ravok.buzz/",
-                priority: 6,
-                isActive: false
-              });
-            }
-          })
-          .catch(() => null)
-      );
-    } else if (canExtractBlakite(rawUrl)) {
+    if (canExtractBlakite(rawUrl)) {
       tasks.push(
         extractBlakite(rawUrl)
           .then(res => {
@@ -501,10 +484,29 @@ async function extractDirectMediaStreams(streams) {
                   quality: s.quality,
                   server: `Blakite - ${s.quality} (${s.type.toUpperCase()})`,
                   referer: "https://hugh.cdn.rumble.cloud/",
-                  priority: s.quality === "1080p" || s.quality === "720p" ? 5 : 4,
+                  priority: s.quality === "1080p" ? 7 : (s.quality === "720p" ? 6 : 5),
                   isActive: false
                 });
               }
+            }
+          })
+          .catch(() => null)
+      );
+    } else if (canExtractRavok(rawUrl)) {
+      tasks.push(
+        extractRavok(rawUrl)
+          .then(res => {
+            if (res?.streamUrl) {
+              directStreams.push({
+                url: res.streamUrl,
+                proxied_url: `/proxy?url=${encodeURIComponent(res.streamUrl)}&ref=${encodeURIComponent("https://ravok.buzz/")}`,
+                type: "hls",
+                server: `${item.server} (Direct Master HLS)`,
+                poster: res.poster || null,
+                referer: "https://ravok.buzz/",
+                priority: 5,
+                isActive: false
+              });
             }
           })
           .catch(() => null)
@@ -516,6 +518,7 @@ async function extractDirectMediaStreams(streams) {
             if (res?.streamUrl) {
               directStreams.push({
                 url: res.streamUrl,
+                proxied_url: `/proxy?url=${encodeURIComponent(res.streamUrl)}&ref=${encodeURIComponent("https://rubystm.com/")}`,
                 type: "hls",
                 server: `${item.server} (Direct HLS)`,
                 referer: "https://rubystm.com/",
@@ -529,14 +532,24 @@ async function extractDirectMediaStreams(streams) {
     } else if (canExtractVidmoly(rawUrl)) {
       tasks.push(
         extractVidmoly(rawUrl)
-          .then(urls => {
-            for (const u of urls || []) {
+          .then(res => {
+            const streamList = res?.streams || (Array.isArray(res) ? res.map(u => ({ url: u, quality: "auto" })) : []);
+            const audios = res?.audios || [];
+            const hasMultiAudio = audios.length > 1;
+
+            for (const s of streamList) {
+              const isMaster = s.isMaster || s.quality === "auto";
+              let label = isMaster ? (hasMultiAudio ? "Multi-Audio Master" : "Adaptive Master") : s.quality;
+
               directStreams.push({
-                url: u,
+                url: s.url,
+                proxied_url: `/proxy?url=${encodeURIComponent(s.url)}&ref=${encodeURIComponent("https://vidmoly.biz/")}`,
                 type: "hls",
-                server: `${item.server} (Direct HLS)`,
-                referer: "https://vidmoly.net/",
-                priority: 4,
+                quality: s.quality,
+                server: `${item.server} - ${label}`,
+                audios: isMaster ? audios : [],
+                referer: "https://vidmoly.biz/",
+                priority: isMaster ? (hasMultiAudio ? 6 : 5) : 4,
                 isActive: false
               });
             }
