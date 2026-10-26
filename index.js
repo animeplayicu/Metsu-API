@@ -40,7 +40,7 @@ function rewriteRequest(request, newPath) {
 }
 
 const watchInflight = new Map();
-const SIGNED_STREAM_WATCH_TTL = 60_000;
+const SIGNED_STREAM_WATCH_TTL = 15 * 60_000; // 15 minutes fresh cache
 
 async function cachedWatch(cacheKey, handlerFn, ttl = WATCH_TTL) {
   const entry = await getAsync(cacheKey);
@@ -244,7 +244,7 @@ export default {
       );
     }
 
-    m = path.match(/^\/watch\/aniwaves\/(\d+)\/(sub|dub)\/aniwaves-(\d+)\/?$/);
+    m = path.match(/^\/watch\/aniwaves\/(\d+)\/(sub|dub|multi)\/aniwaves-(\d+)\/?$/);
     if (m) {
       const [, id, audio, ep] = m;
       return cachedWatch(

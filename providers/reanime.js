@@ -1,7 +1,7 @@
 const __name = (fn, _) => fn;
 import { getMedia } from '../core/anilist.js';
 import { extractFlixcloud } from "../extractors/index.js";
-import { buildTitles } from '../core/new-provider-utils.js';
+import { buildTitleSearchQueries, buildTitles } from '../core/new-provider-utils.js';
 import { get as cacheGet, set as cacheSet, isFresh as cacheIsFresh, SHOW_IDENTITY_TTL } from '../core/smartcache.js';
 
 var BASE = "https://reanime.to";
@@ -9,8 +9,10 @@ var FLIX = "https://flixcloud.cc";
 var ANIZIP2 = "https://api.ani.zip/mappings";
 var UA5 = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 var H = { "User-Agent": UA5, Accept: "application/json, */*" };
-async function searchReanime(query) {
-  const data = await fetch(`${BASE}/api/v1/search?${new URLSearchParams({ q: query, limit: 10 })}`, { headers: H }).then(async (r) => {
+async function searchReanime(query, genre = null) {
+  const params = new URLSearchParams({ q: query, limit: 10 });
+  if (genre) params.set("genre", genre);
+  const data = await fetch(`${BASE}/api/v1/search?${params}`, { headers: H }).then(async (r) => {
     const _raw = await r.text();
     if (!r.ok) { const _e = new Error(`reanime search ${r.status}`); _e.rawBody = _raw; throw _e; }
     try { return JSON.parse(_raw); } catch (_pe) { _pe.rawBody = _raw; throw _pe; }
@@ -36,17 +38,21 @@ function extractAnilistIdFromCover(coverImage) {
 }
 __name(extractAnilistIdFromCover, "extractAnilistIdFromCover");
 async function resolveSeries(anilistId, ctx = {}) {
-  const cacheKey = `np:reanime:${anilistId}`;
+  const cacheKey = `np:match2:reanime:${anilistId}`;
   const cached = cacheGet(cacheKey);
   if (cacheIsFresh(cached)) return cached.data;
 
   const media = ctx.media ?? await getMedia(anilistId);
   const malId = media?.idMal ?? null;
-  const queries = buildTitles(media, ctx.anizip).slice(0, 5);
+  const queries = buildTitleSearchQueries(buildTitles(media, ctx.anizip), 16);
+  const searchRequests = queries.map((query) => searchReanime(query));
+  if (media?.genres?.includes("Hentai")) {
+    searchRequests.push(...queries.map((query) => searchReanime(query, "Hentai")));
+  }
 
   const candidates = new Map();
-  await Promise.all(queries.map(async (q) => {
-    for (const r of await searchReanime(q).catch(() => [])) {
+  await Promise.all(searchRequests.map(async (request) => {
+    for (const r of await request.catch(() => [])) {
       if (r?.anime_id && !candidates.has(r.anime_id)) candidates.set(r.anime_id, r);
     }
   }));
@@ -247,30 +253,26 @@ async function handleWatch3(anilistId, audio, epNum, origin) {
   }
   const { title: title2, slug, watchData, stream, server, servers, streams, failedServers } = resolved;
   const seenStreamUrls = new Set();
-  const cleanStreams = streams.map(({ server: source, stream: item, index }) => {
-    const key = item.playlist_key ?? item.key ?? null;
-    return {
-      server: source.serverName,
-      audio: source.dataType,
-      index,
-      url: item.url,
-      type: "hls",
-      embed: source.dataLink,
-      key,
-      playlist_key: key,
-      subtitles: item.subtitles ?? [],
-      thumbnails_vtt: item.thumbnails_vtt ?? null,
-      video_title: item.video_title ?? null,
-      intro: item.intro_chapter ?? null,
-      outro: item.outro_chapter ?? null
-    };
-  }).filter((item) => {
+  const cleanStreams = streams.map(({ server: source, stream: item, index }) => ({
+    server: source.serverName,
+    audio: source.dataType,
+    index,
+    url: item.url,
+    type: "hls",
+    embed: source.dataLink,
+    key: item.key ?? null,
+    playlist_key: item.playlist_key ?? item.key ?? null,
+    subtitles: item.subtitles ?? [],
+    thumbnails_vtt: item.thumbnails_vtt ?? null,
+    video_title: item.video_title ?? null,
+    intro: item.intro_chapter ?? null,
+    outro: item.outro_chapter ?? null
+  })).filter((item) => {
     if (seenStreamUrls.has(item.url)) return false;
     seenStreamUrls.add(item.url);
     return true;
   });
   const embeds = servers.map((s) => ({ name: s.serverName, type: s.dataType, url: s.dataLink }));
-
   return json3({
     anime: title2,
     slug,
@@ -304,14 +306,10 @@ async function handleStream3(anilistId, audio, epNum) {
   } catch (e) {
     return json3({ error: e.message, "Raw-ERROR": e.rawBody ?? null, stack: e.stack }, e.status ?? 500);
   }
-  const sKey = resolved.stream.playlist_key || resolved.stream.key || "";
-  let loc = `/proxy?url=${encodeURIComponent(resolved.stream.url)}&ref=${encodeURIComponent("https://flixcloud.cc/")}`;
-  if (sKey) loc += `&key=${encodeURIComponent(sKey)}`;
-
   return new Response(null, {
     status: 302,
     headers: {
-      "Location": loc,
+      "Location": resolved.stream.url,
       "Access-Control-Allow-Origin": "*",
       "Cache-Control": "no-store"
     }

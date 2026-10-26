@@ -39,12 +39,12 @@ function latestEpisodeFromResponse(data) {
 
 function hasCurrentProviders(data) {
   return data &&
-    Object.prototype.hasOwnProperty.call(data, "anidbapp") &&
     Object.prototype.hasOwnProperty.call(data, "anizone") &&
     Object.prototype.hasOwnProperty.call(data, "aniwaves") &&
     Object.prototype.hasOwnProperty.call(data, "animeonsen") &&
     Object.prototype.hasOwnProperty.call(data, "anipm") &&
-    Object.prototype.hasOwnProperty.call(data, "piratexplay");
+    Object.prototype.hasOwnProperty.call(data, "piratexplay") &&
+    !Object.prototype.hasOwnProperty.call(data, "anihq");
 }
 
 function latestEpisodeFromAniZip(anizip) {
@@ -61,8 +61,12 @@ function resolveShared(anilistId, freshMedia = false) {
 }
 
 async function clearProviderCache(anilistId, media) {
-  for (const p of ["pahe", "manga", "reanime", "anikoto", "animegg", "anineko", "anidbapp", "anizone", "aniwaves", "animeonsen", "shiro", "anipm", "piratexplay"]) {
+  for (const p of ["pahe", "manga", "mkissa", "reanime", "anikoto", "animegg", "anizone", "aniwaves", "animeonsen", "anipm"]) {
     await delAsync(`epv:${p}:${anilistId}`);
+    if (p === "reanime" || p === "anikoto") {
+      await delAsync(`epv:${p}:v2:${anilistId}`);
+    }
+    await delAsync(`epv:match2:${p}:${anilistId}`);
   }
   if (media?.idMal) {
     await delAsync(`jm:${media.idMal}`);
@@ -152,7 +156,7 @@ function scheduleRefresh(anilistId, entry, env) {
 
     const result = await buildResponse(anilistId, media, anizip, true);
     const latestEpisode = latestEpisodeFromResponse(result);
-    await setAsync(`episodes:${anilistId}`, result, FULL_TTL, NORMAL_PROBE_INTERVAL);
+    await setAsync(`episodes:match3:${anilistId}`, result, FULL_TTL, NORMAL_PROBE_INTERVAL);
     writeSyncState(anilistId, {
       lastProbeAt: Date.now(),
       lastSyncAt: Date.now(),
@@ -177,7 +181,7 @@ function scheduleRefresh(anilistId, entry, env) {
 }
 
 export async function getEpisodesResponse(anilistId, env) {
-  const cacheKey = `episodes:${anilistId}`;
+  const cacheKey = `episodes:match3:${anilistId}`;
   const entry = await getAsync(cacheKey);
 
   if (entry && hasCurrentProviders(entry.data)) {

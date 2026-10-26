@@ -207,19 +207,18 @@ async function resolveSeries(anilistId, ctx = {}) {
   if (isFresh(cached)) return cached.data;
   const media = ctx.media ?? await getMedia(anilistId);
 
-  // 1. Static seed mapping lookup (0ms)
+  // 1. Static seed mapping lookup (0ms instant)
   const mappedSlug = ANILIST_TO_ANIWAVES[anilistId] || (media?.idMal ? MAL_TO_ANIWAVES[media.idMal] : null);
   if (mappedSlug) {
     const siteId = Number(mappedSlug.match(/-(\d+)$/)?.[1]);
-    const detail = await fetchDetail({ slug: mappedSlug, siteId, title: "" }).catch(() => null);
-    if (detail && detail.siteId > 0 && (detail.episodes?.available > 0 || detail.episodes?.total > 0)) {
+    if (siteId > 0) {
       const data = {
-        siteId: detail.siteId,
-        slug: detail.slug,
-        title: detail.title,
+        siteId,
+        slug: mappedSlug,
+        title: media?.title?.english || media?.title?.romaji || mappedSlug,
         score: 1.0,
         matchScore: 1.0,
-        episodeCount: detail.episodes?.available ?? 0,
+        episodeCount: 0,
       };
       set(cacheKey, data, SHOW_IDENTITY_TTL);
       return data;
@@ -300,9 +299,13 @@ function parseEpisodes(html) {
 }
 
 async function fetchEpisodes(series) {
+  const cacheKey = `aniwaves:eps:${series.siteId}`;
+  const cached = get(cacheKey);
+  if (isFresh(cached)) return cached.data;
   const result = await fetchAjax(`/ajax/episode/list/${series.siteId}?vrf=`, `${BASE}/watch/${series.slug}`);
   const episodes = parseEpisodes(String(result || ""));
   if (!episodes.length) throw new Error(`AniWaves has no episodes for ${series.slug}`);
+  set(cacheKey, episodes, 43200);
   return episodes;
 }
 
@@ -327,6 +330,7 @@ function alignEpisodes(sourceEpisodes, media, expected) {
 function buildEpisodeLists(anilistId, sourceEpisodes, ctx, expected) {
   const sub = [];
   const dub = [];
+  const multi = [];
   for (const source of sourceEpisodes) {
     if (expected && source.number > expected) continue;
     const meta = episodeMeta(source.number, ctx);
@@ -344,8 +348,9 @@ function buildEpisodeLists(anilistId, sourceEpisodes, ctx, expected) {
     };
     if (source.hasSub) sub.push({ ...base, id: `watch/aniwaves/${anilistId}/sub/aniwaves-${source.number}`, audio: "sub" });
     if (source.hasDub) dub.push({ ...base, id: `watch/aniwaves/${anilistId}/dub/aniwaves-${source.number}`, audio: "dub" });
+    if (source.hasSub || source.hasDub) multi.push({ ...base, id: `watch/aniwaves/${anilistId}/multi/aniwaves-${source.number}`, audio: "multi" });
   }
-  return { sub, dub };
+  return { sub, dub, multi };
 }
 
 export async function getEpisodes(anilistId, ctx = {}) {
@@ -373,7 +378,7 @@ function parseServerGroups(html) {
   const groups = [];
   const markers = [...html.matchAll(/<div\b([^>]*)>/gi)]
     .map((match) => ({ index: match.index, attrs: match[1], type: attribute(match[1], "data-type") }))
-    .filter((item) => item.type === "sub" || item.type === "dub");
+    .filter((item) => item.type === "sub" || item.type === "dub" || item.type === "ssub");
   for (let index = 0; index < markers.length; index++) {
     const current = markers[index];
     const end = markers[index + 1]?.index ?? html.length;
@@ -382,11 +387,19 @@ function parseServerGroups(html) {
       const attrs = match[1];
       const linkId = attribute(attrs, "data-link-id");
       if (!linkId) continue;
+      const rawName = stripHtml(match[2]) || "AniWaves";
+      const svId = attribute(attrs, "data-sv-id") || null;
+      const isMulti = svId === "15" || /mul-?aud/i.test(rawName);
+      const isDatSaV = svId === "14" || /datsav/i.test(rawName);
+      let displayName = rawName;
+      if (isMulti) displayName = "MuL-AuD (Multi-Audio)";
+      else if (isDatSaV) displayName = "DatSaV (Direct MP4)";
       groups.push({
         audio: current.type,
         linkId,
-        serverId: attribute(attrs, "data-sv-id") || null,
-        server: stripHtml(match[2]) || "AniWaves",
+        serverId: svId,
+        server: displayName,
+        isMultiAudio: isMulti,
       });
     }
   }
@@ -419,10 +432,39 @@ async function resolveSource(source, referer) {
 }
 
 function skipRange(value) {
-  if (!Array.isArray(value) || value.length < 2) return null;
-  const start = Number(value[0]);
-  const end = Number(value[1]);
-  return Number.isFinite(start) && Number.isFinite(end) && end > start ? { start, end } : null;
+  if (!value) return null;
+  if (Array.isArray(value) && value.length >= 2) {
+    const start = Number(value[0]);
+    const end = Number(value[1]);
+    return Number.isFinite(start) && Number.isFinite(end) && end > start ? { start, end } : null;
+  }
+  if (typeof value === "object") {
+    const start = Number(value.start ?? value.startTime ?? value[0]);
+    const end = Number(value.end ?? value.endTime ?? value[1]);
+    return Number.isFinite(start) && Number.isFinite(end) && end > start ? { start, end } : null;
+  }
+  return null;
+}
+
+async function fetchAniSkip(malId, epNum) {
+  if (!malId) return { intro: null, outro: null };
+  try {
+    const res = await fetch(`https://api.aniskip.com/v2/skip-times/${encodeURIComponent(malId)}/${encodeURIComponent(epNum)}?types=op&types=ed&episodeLength=0`);
+    if (!res.ok) return { intro: null, outro: null };
+    const data = await res.json();
+    let intro = null;
+    let outro = null;
+    for (const r of data?.results || []) {
+      if (r.skipType === "op" && r.interval) {
+        intro = { start: Math.round(r.interval.startTime), end: Math.round(r.interval.endTime) };
+      } else if (r.skipType === "ed" && r.interval) {
+        outro = { start: Math.round(r.interval.startTime), end: Math.round(r.interval.endTime) };
+      }
+    }
+    return { intro, outro };
+  } catch {
+    return { intro: null, outro: null };
+  }
 }
 
 async function handleWatch(anilistId, audio, epNum, ctx = {}) {
@@ -434,20 +476,27 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
   if (!episode || (audio === "sub" && !episode.hasSub) || (audio === "dub" && !episode.hasDub)) {
     throw new Error(`AniWaves ${audio} episode ${epNum} not found`);
   }
-  const servers = (await fetchServers(series, episode)).filter((server) => server.audio === audio);
+  const [allServers, aniSkipData] = await Promise.all([
+    fetchServers(series, episode),
+    fetchAniSkip(media?.idMal, epNum).catch(() => ({ intro: null, outro: null })),
+  ]);
+  const servers = allServers.filter((server) => {
+    if (audio === "multi") return server.isMultiAudio || server.audio === "sub" || server.audio === "dub";
+    if (server.audio === audio) return true;
+    if (server.isMultiAudio) return true; // Multi-Audio contains Japanese & English, valid for both sub and dub
+    return false;
+  });
   if (!servers.length) throw new Error(`AniWaves has no ${audio} servers for episode ${epNum}`);
   const referer = `${BASE}/watch/${series.slug}/ep-${episode.sourceNumber}`;
-  const settled = await Promise.all(servers.map(async (server) => {
+  const resolved = await Promise.all(servers.map(async (server) => {
     try {
-      return { server, source: await fetchSource(server.linkId, referer) };
+      const source = await fetchSource(server.linkId, referer);
+      const direct = source?.url ? await resolveSource(source, referer) : [];
+      return { server, source, direct };
     } catch (error) {
-      return { server, error };
+      return { server, error, direct: [] };
     }
   }));
-  const resolved = await Promise.all(settled.map(async (item) => ({
-    ...item,
-    direct: item.source?.url ? await resolveSource(item.source, referer) : [],
-  })));
   const streams = [];
   let intro = null;
   let outro = null;
@@ -460,14 +509,29 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     intro ??= skipRange(skip.intro);
     outro ??= skipRange(skip.outro);
     for (const stream of item.direct) {
+      const isMuL = item.server.isMultiAudio || stream.isMultiAudio || stream.server === "MuL-AuD";
+      const isDatSaV = item.server.serverId === "14" || stream.server === "DatSaV";
+      const isDirectMp4 = stream.type === "mp4";
+      let priority = 4;
+      if (isMuL) priority = 7;
+      else if (isDatSaV) priority = 6;
+      else if (isDirectMp4) priority = 5;
+      else if (stream.type === "hls") priority = 5;
+
+      if (stream.intro) intro ??= skipRange(stream.intro);
+      if (stream.outro) outro ??= skipRange(stream.outro);
+
       streams.push({
         url: stream.url,
+        proxied_url: `/proxy?url=${encodeURIComponent(stream.url)}&ref=${encodeURIComponent(sourceReferer)}`,
         type: stream.type,
         server: item.server.server,
         referer: sourceReferer,
         quality: stream.quality,
-        priority: streams.length ? 4 : 5,
-        isActive: streams.length === 0,
+        isMultiAudio: Boolean(isMuL),
+        subtitles: stream.tracks || [],
+        priority,
+        isActive: false,
       });
     }
     streams.push({
@@ -475,15 +539,23 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
       type: "embed",
       server: item.server.server,
       referer: sourceReferer,
-      priority: streams.length ? 4 : 5,
-      isActive: streams.length === 0,
+      priority: 2,
+      isActive: false,
     });
   }
   if (!streams.length) {
-    const failure = settled.find((item) => item.error)?.error;
+    const failure = resolved.find((item) => item.error)?.error;
     throw failure ?? new Error(`AniWaves sources unavailable for episode ${epNum}`);
   }
-  const topStream = streams.find((s) => s.isActive) || streams.find((s) => s.type === "hls") || streams[0];
+
+  // Sort streams so MuL-AuD and DatSaV are prioritized at the very top
+  streams.sort((a, b) => b.priority - a.priority);
+  streams[0].isActive = true;
+  const topStream = streams[0];
+
+  // Fallback to AniSkip intro/outro if server had no skip data
+  intro ??= aniSkipData?.intro ?? null;
+  outro ??= aniSkipData?.outro ?? null;
 
   return json({
     anilistId: Number(anilistId),
@@ -492,7 +564,9 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     audio,
     intro,
     outro,
-    stream_url: topStream?.url || null,
+    stream_url: topStream?.proxied_url || topStream?.url || null,
+    raw_stream_url: topStream?.url || null,
+    proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
     streams,
   });
 }
@@ -526,10 +600,10 @@ export default {
     }
     const url = new URL(request.url);
     try {
-      const match = url.pathname.match(/^\/watch\/aniwaves\/(\d+)\/(sub|dub)\/aniwaves-(\d+)\/?$/);
+      const match = url.pathname.match(/^\/watch\/aniwaves\/(\d+)\/(sub|dub|multi)\/aniwaves-(\d+)\/?$/);
       if (match) return await handleWatch(match[1], match[2], match[3]);
 
-      const streamMatch = url.pathname.match(/^\/stream\/aniwaves\/(\d+)\/(sub|dub)\/(\d+)\/?$/);
+      const streamMatch = url.pathname.match(/^\/stream\/aniwaves\/(\d+)\/(sub|dub|multi)\/(\d+)\/?$/);
       if (streamMatch) return await handleStream(streamMatch[1], streamMatch[2], streamMatch[3]);
 
       return json({ error: "Not found" }, 404);
@@ -538,3 +612,4 @@ export default {
     }
   },
 };
+

@@ -129,12 +129,15 @@ async function scrapeEpisodeWatch(epSlug, audio) {
     const sources = await scrapeEmbed(tab.embedId);
     const streams = sources.map((s, j) => {
       const ref = `${new URL(tab.embedUrl).origin}/`;
+      const proxied = `/proxy?url=${encodeURIComponent(s.url)}&ref=${encodeURIComponent(ref)}`;
       const streamObj = {
-        url: s.url,
-        proxied_url: `/proxy?url=${encodeURIComponent(s.url)}&ref=${encodeURIComponent(ref)}`,
+        url: proxied,
+        raw_url: s.url,
+        proxied_url: proxied,
         type: s.url.includes(".m3u8") ? "hls" : "mp4",
         quality: s.quality,
-        backup: s.backup,
+        backup: s.backup ? `/proxy?url=${encodeURIComponent(s.backup)}&ref=${encodeURIComponent(ref)}` : null,
+        raw_backup: s.backup,
         audio: tab.normalized,
         server: tab.server,
         embed: tab.embedUrl,
@@ -344,8 +347,33 @@ export async function getEpisodes(anilistId, ctx = {}) {
   };
 }
 
+async function fetchAniSkip(malId, epNum) {
+  if (!malId) return { intro: null, outro: null };
+  try {
+    const res = await fetch(`https://api.aniskip.com/v2/skip-times/${encodeURIComponent(malId)}/${encodeURIComponent(epNum)}?types=op&types=ed&episodeLength=0`);
+    if (!res.ok) return { intro: null, outro: null };
+    const data = await res.json();
+    let intro = null;
+    let outro = null;
+    for (const r of data?.results || []) {
+      if (r.skipType === "op" && r.interval) {
+        intro = { start: Math.round(r.interval.startTime), end: Math.round(r.interval.endTime) };
+      } else if (r.skipType === "ed" && r.interval) {
+        outro = { start: Math.round(r.interval.startTime), end: Math.round(r.interval.endTime) };
+      }
+    }
+    return { intro, outro };
+  } catch {
+    return { intro: null, outro: null };
+  }
+}
+
 async function handleWatch(anilistId, audio, epNum, ctx = {}) {
-  const series = await resolveSeries(anilistId, ctx);
+  const media = ctx.media ?? await getMedia(anilistId);
+  const [series, aniSkipData] = await Promise.all([
+    resolveSeries(anilistId, { ...ctx, media }),
+    fetchAniSkip(media?.idMal, epNum).catch(() => ({ intro: null, outro: null })),
+  ]);
   const providerEp = series.mode === "offset" ? Number(epNum) + series.offset : Number(epNum);
   const episodes = await scrapeSeries(series.slug);
   const ep = episodes.find((e) => e.number === providerEp);
@@ -383,7 +411,10 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     audio: effectiveAudio,
     requestedAudio: audio,
     title: watch.title,
-    stream_url: topStream?.url || null,
+    intro: aniSkipData?.intro ?? null,
+    outro: aniSkipData?.outro ?? null,
+    stream_url: topStream?.proxied_url || topStream?.url || null,
+    raw_stream_url: topStream?.raw_url || topStream?.url || null,
     proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
     streams: watch.streams,
   });

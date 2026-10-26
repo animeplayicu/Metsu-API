@@ -21,6 +21,18 @@ const FLIX_SEGMENT_XOR_KEY = new Uint8Array([
   166, 25, 228, 59, 216, 98, 15, 197
 ]);
 
+let _wreqFetch = null;
+async function getWreqFetch() {
+  if (_wreqFetch !== null) return _wreqFetch;
+  try {
+    const mod = await import("../core/wreq.js");
+    _wreqFetch = mod.wreqFetch;
+  } catch {
+    _wreqFetch = false;
+  }
+  return _wreqFetch;
+}
+
 /**
  * Unwrap Flixcloud PNG/WebP disguised & XOR-encrypted MPEG-TS chunks
  */
@@ -152,6 +164,14 @@ function detectDefaultHeaders(targetUrl) {
     return {
       referer: "https://anizone.to/",
       origin: "https://anizone.to",
+    };
+  }
+
+  // Ani.pm / Settlar
+  if (host.includes("settlar") || host.includes("anipm")) {
+    return {
+      referer: "https://embed.settlar.io/",
+      origin: "https://embed.settlar.io",
     };
   }
 
@@ -365,25 +385,66 @@ async function handleRequest(request, env = {}, ctx = null) {
     if (sc) upstreamHeaders.set("Cookie", sc);
   }
 
+  const isCfHost = targetUrl.hostname.toLowerCase().includes("settlar") ||
+                   targetUrl.hostname.toLowerCase().includes("anipm");
+
   let upstreamResponse;
-  try {
-    upstreamResponse = await fetch(targetUrl.href, {
-      method: request.method,
-      headers: upstreamHeaders,
-      redirect: "follow",
-    });
-  } catch (err) {
-    return new Response(
-      JSON.stringify({
-        error: "Upstream fetch failed",
-        details: err.message,
-        target: targetUrl.href,
-      }),
-      {
-        status: 502,
-        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+  const wreq = await getWreqFetch();
+
+  if (isCfHost && wreq) {
+    try {
+      const headersObj = Object.fromEntries(upstreamHeaders.entries());
+      upstreamResponse = await wreq(targetUrl.href, {
+        method: request.method,
+        headers: headersObj,
+        redirect: "follow",
+      });
+    } catch {}
+  }
+
+  if (!upstreamResponse) {
+    try {
+      upstreamResponse = await fetch(targetUrl.href, {
+        method: request.method,
+        headers: upstreamHeaders,
+        redirect: "follow",
+      });
+    } catch (err) {
+      if (wreq) {
+        try {
+          const headersObj = Object.fromEntries(upstreamHeaders.entries());
+          upstreamResponse = await wreq(targetUrl.href, {
+            method: request.method,
+            headers: headersObj,
+            redirect: "follow",
+          });
+        } catch (wreqErr) {
+          return new Response(
+            JSON.stringify({
+              error: "Upstream fetch failed",
+              details: wreqErr.message,
+              target: targetUrl.href,
+            }),
+            {
+              status: 502,
+              headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+            }
+          );
+        }
+      } else {
+        return new Response(
+          JSON.stringify({
+            error: "Upstream fetch failed",
+            details: err.message,
+            target: targetUrl.href,
+          }),
+          {
+            status: 502,
+            headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+          }
+        );
       }
-    );
+    }
   }
 
   // If Shiro returns 403 (cookie expired), refresh cookie and retry once
@@ -401,9 +462,31 @@ async function handleRequest(request, env = {}, ctx = null) {
     }
   }
 
+  let rawContentType = (upstreamResponse.headers.get("content-type") || "").toLowerCase();
+
+  // If upstream returned 403 or HTML challenge when expecting media, retry once with wreq
+  if (
+    wreq &&
+    !isCfHost &&
+    (upstreamResponse.status === 403 || (upstreamResponse.status === 200 && rawContentType.includes("text/html")))
+  ) {
+    try {
+      const headersObj = Object.fromEntries(upstreamHeaders.entries());
+      const retryRes = await wreq(targetUrl.href, {
+        method: request.method,
+        headers: headersObj,
+        redirect: "follow",
+      });
+      const retryContentType = (retryRes.headers.get("content-type") || "").toLowerCase();
+      if (retryRes.status === 200 && !retryContentType.includes("text/html")) {
+        upstreamResponse = retryRes;
+        rawContentType = retryContentType;
+      }
+    } catch {}
+  }
+
   // Final URL after any redirects
   const finalBaseUrl = upstreamResponse.url || targetUrl.href;
-  const rawContentType = (upstreamResponse.headers.get("content-type") || "").toLowerCase();
 
   // For MP4 files (e.g. Animegg / Vidcache): stream directly with Range & 206 Partial Content support
   const isMp4 =
