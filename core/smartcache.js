@@ -238,5 +238,4 @@ export function mapTTL(status) {
 
 export const WATCH_TTL         = 3 * HOUR;
 export const SHOW_IDENTITY_TTL = 24 * HOUR;
-export const PIRATEXPLAY_WATCH_TTL = 24 * HOUR;
 export const THIRTY_DAYS       = 30 * DAY;

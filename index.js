@@ -4,22 +4,18 @@ import mkissaHandler               from "./providers/mkissa.js";
 import reanimeHandler              from "./providers/reanime.js";
 import anikotoHandler              from "./providers/anikoto.js";
 import animeggHandler              from "./providers/animegg.js";
-import aninekoHandler              from "./providers/anineko.js";
-import anidbappHandler             from "./providers/anidbapp.js";
 import animenosubHandler           from "./providers/animenosub.js";
 import anizoneHandler              from "./providers/anizone.js";
 import aniwavesHandler             from "./providers/aniwaves.js";
-import anibdHandler                from "./providers/anibd.js";
 import senshiHandler               from "./providers/senshi.js";
 import kaaHandler                  from "./providers/kickassanime.js";
 import animedunyaHandler           from "./providers/animedunya.js";
 import animeonsenHandler           from "./providers/animeonsen.js";
-import shiroHandler                from "./providers/shiro.js";
 import anipmHandler                from "./providers/anipm.js";
-import piratexplayHandler         from "./providers/piratexplay.js";
+import anipmbetaHandler            from "./providers/anipmbeta.js";
 import { getEpisodesResponse, getFilteredEpisodesResponse } from "./core/episode-cache.js";
 import { resolveProviders }         from "./core/episode-strategy.js";
-import { getAsync, setAsync, isFresh, mapTTL, WATCH_TTL, PIRATEXPLAY_WATCH_TTL, _CACHE_ENABLED } from "./core/smartcache.js";
+import { getAsync, setAsync, isFresh, mapTTL, WATCH_TTL, _CACHE_ENABLED } from "./core/smartcache.js";
 import proxyHandler from "./proxy/_worker.js";
 
 function json(data, status = 200) {
@@ -208,24 +204,6 @@ export default {
       );
     }
 
-    m = path.match(/^\/watch\/anineko\/(\d+)\/(sub|dub)\/anineko-(\d+)\/?$/);
-    if (m) {
-      const [, id, audio, ep] = m;
-      return cachedWatch(
-        `watch:anineko:${id}:${audio}:${ep}`,
-        () => aninekoHandler.fetch(request)
-      );
-    }
-
-    m = path.match(/^\/watch\/anidbapp\/(\d+)\/(sub|dub)\/anidbapp-(\d+)\/?$/);
-    if (m) {
-      const [, id, audio, ep] = m;
-      return cachedWatch(
-        `watch:anidbapp:${id}:${audio}:${ep}`,
-        () => anidbappHandler.fetch(request)
-      );
-    }
-
     m = path.match(/^\/watch\/animenosub\/(\d+)\/(sub|dub)\/animenosub-(\d+)\/?$/);
     if (m) {
       const [, id, audio, ep] = m;
@@ -250,15 +228,6 @@ export default {
       return cachedWatch(
         `watch:aniwaves:${id}:${audio}:${ep}`,
         () => aniwavesHandler.fetch(request)
-      );
-    }
-
-    m = path.match(/^\/watch\/anibd\/(\d+)\/(sub|dub)\/anibd-(\d+)\/?$/);
-    if (m) {
-      const [, id, audio, ep] = m;
-      return cachedWatch(
-        `watch:anibd:${id}:${audio}:${ep}`,
-        () => anibdHandler.fetch(request)
       );
     }
 
@@ -299,15 +268,6 @@ export default {
       );
     }
 
-    m = path.match(/^\/watch\/shiro\/(\d+)\/(sub|dub|hsub)\/shiro-(\d+)\/?$/);
-    if (m) {
-      const [, id, audio, ep] = m;
-      return cachedWatch(
-        `watch:shiro:${id}:${audio}:${ep}`,
-        () => shiroHandler.fetch(request)
-      );
-    }
-
     m = path.match(/^\/watch\/anipm\/(\d+)\/(sub|dub)\/anipm-(\d+)\/?$/);
     if (m) {
       const [, id, audio, ep] = m;
@@ -318,14 +278,23 @@ export default {
       );
     }
 
-    m = path.match(/^\/watch\/piratexplay\/(\d+)\/(sub|dub|multi)\/piratexplay-(.+)\/?$/);
+    m = path.match(/^\/watch\/anipmbeta\/(\d+)\/(sub|dub|multi)\/(?:anipmbeta-)?(\d+)\/?$/);
     if (m) {
       const [, id, audio, ep] = m;
       return cachedWatch(
-        `watch:piratexplay:${id}:${audio}:${ep}`,
-        () => piratexplayHandler.fetch(request),
-        PIRATEXPLAY_WATCH_TTL
+        `watch:anipmbeta:${id}:${audio}:${ep}`,
+        () => anipmbetaHandler.fetch(request)
       );
+    }
+
+    m = path.match(/^\/stream\/anipmbeta\/(\d+)\/(sub|dub|multi)\/(\d+)\/?$/);
+    if (m) {
+      return anipmbetaHandler.fetch(request);
+    }
+
+    m = path.match(/^\/episodes\/anipmbeta\/(\d+)\/?$/);
+    if (m) {
+      return anipmbetaHandler.fetch(request);
     }
 
     return json({
@@ -336,19 +305,15 @@ export default {
         "reanime",
         "anikoto",
         "animegg",
-        "anineko",
-        "anidbapp",
         "animenosub",
         "anizone",
         "aniwaves",
-        "anibd",
         "senshi",
         "kaa",
         "animedunya",
         "animeonsen",
-        "shiro",
         "anipm",
-        "piratexplay",
+        "anipmbeta",
       ],
       routes: [
         "/map/:anilistId",
@@ -359,20 +324,17 @@ export default {
         "/stream/reanime/:id/sub|dub/:ep",
         "/watch/anikoto/:id/sub|dub/anikoto-:ep",
         "/watch/animegg/:id/sub|dub/animegg-:ep",
-        "/watch/anineko/:id/sub|dub/anineko-:ep",
-        "/watch/anidbapp/:id/sub|dub/anidbapp-:ep",
         "/watch/animenosub/:id/sub|dub/animenosub-:ep",
         "/watch/anizone/:id/sub|dub/anizone-:ep",
         "/watch/aniwaves/:id/sub|dub/aniwaves-:ep",
-        "/watch/anibd/:id/sub|dub/anibd-:ep",
         "/watch/senshi/:id/sub|dub/senshi-:ep",
         "/watch/kaa/:id/sub|dub/kaa-:ep",
         "/watch/animedunya/:id/sub|dub/animedunya-:ep",
         "/watch/animeonsen/:id/sub|dub/animeonsen-:ep",
-        "/watch/shiro/:id/sub|dub|hsub/shiro-:ep",
         "/watch/anipm/:id/sub|dub/anipm-:ep",
         "/stream/anipm/:id/sub|dub/:ep",
-        "/watch/piratexplay/:id/sub|dub|multi/piratexplay-:ep",
+        "/watch/anipmbeta/:id/sub|dub/:ep",
+        "/stream/anipmbeta/:id/sub|dub/:ep",
       ],
     });
   },

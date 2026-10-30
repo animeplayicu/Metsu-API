@@ -67,6 +67,7 @@ async function fetchText(url, headers = {}) {
       "Accept-Language": "en-US,en;q=0.9",
       ...headers,
     },
+    signal: AbortSignal.timeout(6000),
   });
   const raw = await response.text();
   if (!response.ok) {
@@ -391,6 +392,8 @@ function parseServerGroups(html) {
       const svId = attribute(attrs, "data-sv-id") || null;
       const isMulti = svId === "15" || /mul-?aud/i.test(rawName);
       const isDatSaV = svId === "14" || /datsav/i.test(rawName);
+      const isVidplay = svId === "4" || /vidplay/i.test(rawName) || /echovideo/i.test(rawName);
+      const isDirect = isDatSaV || isMulti || isVidplay;
       let displayName = rawName;
       if (isMulti) displayName = "MuL-AuD (Multi-Audio)";
       else if (isDatSaV) displayName = "DatSaV (Direct MP4)";
@@ -400,6 +403,7 @@ function parseServerGroups(html) {
         serverId: svId,
         server: displayName,
         isMultiAudio: isMulti,
+        isDirect,
       });
     }
   }
@@ -449,7 +453,9 @@ function skipRange(value) {
 async function fetchAniSkip(malId, epNum) {
   if (!malId) return { intro: null, outro: null };
   try {
-    const res = await fetch(`https://api.aniskip.com/v2/skip-times/${encodeURIComponent(malId)}/${encodeURIComponent(epNum)}?types=op&types=ed&episodeLength=0`);
+    const res = await fetch(`https://api.aniskip.com/v2/skip-times/${encodeURIComponent(malId)}/${encodeURIComponent(epNum)}?types=op&types=ed&episodeLength=0`, {
+      signal: AbortSignal.timeout(1500),
+    });
     if (!res.ok) return { intro: null, outro: null };
     const data = await res.json();
     let intro = null;
@@ -480,13 +486,19 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     fetchServers(series, episode),
     fetchAniSkip(media?.idMal, epNum).catch(() => ({ intro: null, outro: null })),
   ]);
-  const servers = allServers.filter((server) => {
+  const allMatchingServers = allServers.filter((server) => {
     if (audio === "multi") return server.isMultiAudio || server.audio === "sub" || server.audio === "dub";
     if (server.audio === audio) return true;
     if (server.isMultiAudio) return true; // Multi-Audio contains Japanese & English, valid for both sub and dub
     return false;
   });
-  if (!servers.length) throw new Error(`AniWaves has no ${audio} servers for episode ${epNum}`);
+  if (!allMatchingServers.length) throw new Error(`AniWaves has no ${audio} servers for episode ${epNum}`);
+
+  // Fast-path: Prioritize direct playable stream servers (DatSaV MP4, MuL-AuD, Vidplay/Echovideo)
+  // Skip slow ad-heavy embed servers (BYFMS, DGHG) when direct servers are available
+  const directServers = allMatchingServers.filter((server) => server.isDirect);
+  const servers = directServers.length > 0 ? directServers : allMatchingServers;
+
   const referer = `${BASE}/watch/${series.slug}/ep-${episode.sourceNumber}`;
   const resolved = await Promise.all(servers.map(async (server) => {
     try {
@@ -564,7 +576,7 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     audio,
     intro,
     outro,
-    stream_url: topStream?.proxied_url || topStream?.url || null,
+    stream_url: topStream?.url || topStream?.proxied_url || null,
     raw_stream_url: topStream?.url || null,
     proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
     streams,

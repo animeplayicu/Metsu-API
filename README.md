@@ -31,11 +31,10 @@ It's the backbone powering **[Anivexa](https://github.com/walterwhite-69/Anivexa
 | **Reanime** | ✅ Active | Solid source for a wide range of titles |
 | **AniKoto** | ✅ Active | Good library, consistent |
 | **AnimeGG** | ✅ Active | Fuzzy title matching + compact-query fix for sequels (e.g. Re:Zero S4) |
-| **AniNeko** | ✅ Active | Reliable slug-based matching |
-| **AniDB App** | ✅ Active | Language-aware, AniDB ID backed |
+| **AnimeNoSub** | ✅ Active | Sub and dub episodes |
 | **AniZone** | ✅ Active | HLS + subtitles, sub-only; year-based re-scoring prevents wrong-season matches |
-| **AniWaves** | ✅ Active | Direct HLS from Vidplay, MyCloud, and BYFMS; DATASV quality MP4 sources; embed fallbacks |
-| **Anibd** | ✅ Active | Uses Anilist ID internally; AniList ID used everywhere else |
+| **AniWaves** | ✅ Active | Direct HLS from Vidplay/Echovideo, DATASV direct MP4, fast-path optimized |
+| **Senshi** | ✅ Active | Episode mapping and streams, MAL ID direct |
 | **Kickassanime** | ✅ Active | Fuzzy search, medium library |
 | **AnimeDunya** | ✅ Active | HLS + subtitles, sub-only, MAL ID backed |
 | **AnimeOnsen** | ✅ Active | DASH + subtitles, sub-only, AniList/MAL identity verified |

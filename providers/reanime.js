@@ -187,12 +187,75 @@ async function handleEpisodes3(anilistId, url) {
 }
 __name(handleEpisodes3, "handleEpisodes");
 async function resolveStream3(anilistId, audio, ep) {
+  const order = { "HD-2": 0, "HD-1": 1 };
+  const byPrio = (arr) => arr.slice().sort((a, b) => (order[a.serverName] ?? 9) - (order[b.serverName] ?? 9));
+  const audioTypes = audio === "sub" ? ["sub", "s-sub"] : ["dub", "s-dub"];
+
+  // 1. FAST-PATH: Direct /api/flix/${anilistId}/${ep} without blocking on title search
+  let flixData = null;
+  try {
+    const flixRes = await fetch(`${BASE}/api/flix/${anilistId}/${ep}`, { headers: H });
+    if (flixRes.ok) {
+      flixData = await flixRes.json().catch(() => null);
+    }
+  } catch {}
+
+  const flixServers = flixData?.success && Array.isArray(flixData?.servers)
+    ? byPrio(flixData.servers.filter((s) => audioTypes.includes(s.dataType)))
+    : [];
+
+  if (flixServers.length > 0) {
+    const seenServers = new Set();
+    const uniqueServers = flixServers.filter((s) => {
+      const key = `${s.serverName}:${s.dataType}:${s.dataLink}`;
+      if (seenServers.has(key)) return false;
+      seenServers.add(key);
+      return true;
+    });
+
+    const decrypted = await Promise.all(uniqueServers.map(async (server, index) => {
+      try {
+        const embedRes = await fetch(server.dataLink, { headers: { ...H, Referer: `${BASE}/` } });
+        if (!embedRes.ok) throw new Error(`Embed fetch failed: ${embedRes.status}`);
+        const stream = await extractFlixcloud(await embedRes.text(), { apiBase: FLIX, headers: H, referer: `${BASE}/` });
+        return { server, stream, index };
+      } catch (error) {
+        return { server, error: error.message, index };
+      }
+    }));
+
+    const streams = decrypted.filter((item) => item.stream?.url);
+    if (streams.length > 0) {
+      // Background non-blocking series lookup to get title/slug if available
+      let series = null;
+      try {
+        series = await Promise.race([
+          resolveSeries(anilistId),
+          new Promise((r) => setTimeout(() => r(null), 120))
+        ]);
+      } catch {}
+
+      const title2 = series?.title || `AniList-${anilistId}`;
+      const slug = series?.animeId || String(anilistId);
+
+      return {
+        title: title2,
+        slug,
+        watchData: null,
+        stream: streams[0].stream,
+        server: streams[0].server.serverName,
+        servers: uniqueServers,
+        streams,
+        failedServers: decrypted.filter((item) => item.error)
+      };
+    }
+  }
+
+  // 2. SLOW-PATH FALLBACK: Full resolveSeries search + /api/watch/${slug}/${ep}
   const series = await resolveSeries(anilistId);
   const title2 = series.title;
   const slug = series.animeId;
-  const order = { "HD-2": 0, "HD-1": 1 };
-  const byPrio = (arr) => arr.slice().sort((a, b) => (order[a.serverName] ?? 9) - (order[b.serverName] ?? 9));
-  const [watchRes, flixRes] = await Promise.allSettled([
+  const [watchRes, fallbackFlixRes] = await Promise.allSettled([
     fetch(`${BASE}/api/watch/${slug}/${ep}`, { headers: H }).then(async (r) => {
       const _raw = await r.text();
       if (!r.ok) { const _e = new Error(`watch ${r.status}`); _e.rawBody = _raw; throw _e; }
@@ -205,15 +268,14 @@ async function resolveStream3(anilistId, audio, ep) {
     })
   ]);
   const watchData = watchRes.status === "fulfilled" ? watchRes.value : null;
-  const flixData = flixRes.status === "fulfilled" ? flixRes.value : null;
+  const flixFallback = fallbackFlixRes.status === "fulfilled" ? fallbackFlixRes.value : null;
   const links = [...watchData?.episode_links ?? []];
-  if (flixData?.success && flixData?.servers) {
+  if (flixFallback?.success && flixFallback?.servers) {
     const seen = new Set(links.map((s) => s["$id"]));
-    for (const s of flixData.servers) {
+    for (const s of flixFallback.servers) {
       if (!seen.has(s["$id"])) links.push(s);
     }
   }
-  const audioTypes = audio === "sub" ? ["sub", "s-sub"] : ["dub", "s-dub"];
   const servers = byPrio(links.filter((s) => audioTypes.includes(s.dataType)));
   if (!servers.length) throw Object.assign(new Error(`No ${audio} servers for "${title2}" ep ${ep}`), { status: 404 });
   const seenServers = new Set();
@@ -241,6 +303,15 @@ async function resolveStream3(anilistId, audio, ep) {
   return { title: title2, slug, watchData, stream: streams[0].stream, server: streams[0].server.serverName, servers: uniqueServers, streams, failedServers: decrypted.filter((item) => item.error) };
 }
 __name(resolveStream3, "resolveStream");
+function buildReanimeProxyUrl(streamUrl, key = null, ref = "https://flixcloud.cc/") {
+  if (!streamUrl) return null;
+  let p = `/proxy?url=${encodeURIComponent(streamUrl)}&ref=${encodeURIComponent(ref)}`;
+  if (key) {
+    p += `&key=${encodeURIComponent(key)}`;
+  }
+  return p;
+}
+
 async function handleWatch3(anilistId, audio, epNum, origin) {
   if (audio !== "sub" && audio !== "dub") return json3({ error: "audio must be sub or dub" }, 400);
   const ep = parseInt(epNum);
@@ -253,26 +324,38 @@ async function handleWatch3(anilistId, audio, epNum, origin) {
   }
   const { title: title2, slug, watchData, stream, server, servers, streams, failedServers } = resolved;
   const seenStreamUrls = new Set();
-  const cleanStreams = streams.map(({ server: source, stream: item, index }) => ({
-    server: source.serverName,
-    audio: source.dataType,
-    index,
-    url: item.url,
-    type: "hls",
-    embed: source.dataLink,
-    key: item.key ?? null,
-    playlist_key: item.playlist_key ?? item.key ?? null,
-    subtitles: item.subtitles ?? [],
-    thumbnails_vtt: item.thumbnails_vtt ?? null,
-    video_title: item.video_title ?? null,
-    intro: item.intro_chapter ?? null,
-    outro: item.outro_chapter ?? null
-  })).filter((item) => {
+  const cleanStreams = streams.map(({ server: source, stream: item, index }) => {
+    const key = item.key ?? item.playlist_key ?? null;
+    const proxied_url = buildReanimeProxyUrl(item.url, key, `${FLIX}/`);
+    return {
+      server: source.serverName,
+      audio: source.dataType,
+      index,
+      url: item.url,
+      proxied_url,
+      type: "hls",
+      embed: source.dataLink,
+      key,
+      playlist_key: key,
+      subtitles: item.subtitles ?? [],
+      thumbnails_vtt: item.thumbnails_vtt ?? null,
+      video_title: item.video_title ?? null,
+      intro: item.intro_chapter ?? null,
+      outro: item.outro_chapter ?? null,
+      headers: {
+        Referer: `${FLIX}/`,
+        "User-Agent": UA5
+      }
+    };
+  }).filter((item) => {
     if (seenStreamUrls.has(item.url)) return false;
     seenStreamUrls.add(item.url);
     return true;
   });
   const embeds = servers.map((s) => ({ name: s.serverName, type: s.dataType, url: s.dataLink }));
+  const topKey = stream?.key ?? stream?.playlist_key ?? null;
+  const proxiedStreamUrl = cleanStreams[0]?.proxied_url || buildReanimeProxyUrl(stream?.url, topKey, `${FLIX}/`);
+
   return json3({
     anime: title2,
     slug,
@@ -280,6 +363,7 @@ async function handleWatch3(anilistId, audio, epNum, origin) {
     audio,
     server,
     stream_url: stream.url,
+    proxied_stream_url: proxiedStreamUrl,
     streams: cleanStreams,
     subtitles: stream.subtitles,
     thumbnails_vtt: stream.thumbnails_vtt,
@@ -306,10 +390,12 @@ async function handleStream3(anilistId, audio, epNum) {
   } catch (e) {
     return json3({ error: e.message, "Raw-ERROR": e.rawBody ?? null, stack: e.stack }, e.status ?? 500);
   }
+  const topKey = resolved.stream?.key ?? resolved.stream?.playlist_key ?? null;
+  const target = buildReanimeProxyUrl(resolved.stream?.url, topKey, `${FLIX}/`) || resolved.stream?.url;
   return new Response(null, {
     status: 302,
     headers: {
-      "Location": resolved.stream.url,
+      "Location": target,
       "Access-Control-Allow-Origin": "*",
       "Cache-Control": "no-store"
     }

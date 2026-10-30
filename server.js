@@ -33,8 +33,9 @@ function serveStatic(res, entry) {
 
 async function nodeToRequest(req) {
   const host     = req.headers["host"] ?? `localhost:${PORT}`;
+  const proto    = req.headers["x-forwarded-proto"] || (req.socket?.encrypted ? "https" : "http");
   const stripped = BASE && req.url.startsWith(BASE) ? req.url.slice(BASE.length) || "/" : req.url;
-  const url      = `http://${host}${stripped}`;
+  const url      = `${proto}://${host}${stripped}`;
 
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);
@@ -66,18 +67,13 @@ const server = http.createServer(async (req, res) => {
     for (const [k, v] of response.headers) res.setHeader(k, v);
 
     if (response.body) {
-      if (typeof Readable.fromWeb === "function") {
-        const nodeStream = Readable.fromWeb(response.body);
-        nodeStream.on("error", () => {
-          if (!res.destroyed) res.destroy();
-        });
-        res.on("close", () => {
-          if (!nodeStream.destroyed) nodeStream.destroy();
-        });
-        nodeStream.pipe(res);
-      } else {
-        const buf = await response.arrayBuffer();
-        res.end(Buffer.from(buf));
+      try {
+        for await (const chunk of response.body) {
+          res.write(chunk);
+        }
+        res.end();
+      } catch (streamErr) {
+        if (!res.destroyed) res.destroy(streamErr);
       }
     } else {
       res.end();

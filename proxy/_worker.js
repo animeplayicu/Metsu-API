@@ -129,6 +129,14 @@ function detectDefaultHeaders(targetUrl) {
     };
   }
 
+  // CNO / Ani.pm beta
+  if (host.includes("cno.to")) {
+    return {
+      referer: "https://beta.cno.to/",
+      origin: "https://beta.cno.to",
+    };
+  }
+
   // Anikoto / MegaPlay / HiAnime / RapidCloud
   if (host.includes("anikoto")) {
     return {
@@ -175,43 +183,11 @@ function detectDefaultHeaders(targetUrl) {
     };
   }
 
-  // Shiro
-  if (host.includes("shiro")) {
-    return {
-      referer: "https://shiro.so/",
-      origin: "https://shiro.so",
-    };
-  }
-
   // Default fallback: use the target's own origin
   return {
     referer: `${targetUrl.origin}/`,
     origin: targetUrl.origin,
   };
-}
-
-let shiroCookieCache = null;
-let shiroCookieExpiry = 0;
-
-async function getShiroProxyCookie(forceRefresh = false) {
-  if (!forceRefresh && shiroCookieCache && Date.now() < shiroCookieExpiry) {
-    return shiroCookieCache;
-  }
-  for (const url of ["https://shiro.so/anime/x/1", "https://shiro.so/"]) {
-    try {
-      const res = await fetch(url, { headers: { "User-Agent": DEFAULT_UA } });
-      const cookies = typeof res.headers.getSetCookie === "function"
-        ? res.headers.getSetCookie()
-        : [res.headers.get("set-cookie")].filter(Boolean);
-      const match = (cookies.find(c => c && c.startsWith("shiro_watch=")) || "").split(";")[0];
-      if (match) {
-        shiroCookieCache = match;
-        shiroCookieExpiry = Date.now() + 23 * 60 * 60 * 1000;
-        return match;
-      }
-    } catch {}
-  }
-  return shiroCookieCache;
 }
 
 function buildProxiedUrl(proxyOrigin, targetUrlStr, context) {
@@ -299,7 +275,10 @@ async function handleRequest(request, env = {}, ctx = null) {
   }
 
   const reqUrl = new URL(request.url);
-  const proxyOrigin = reqUrl.origin;
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const isLocal = reqUrl.hostname === "localhost" || reqUrl.hostname.startsWith("127.");
+  const proto = forwardedProto || (isLocal ? (reqUrl.protocol ? reqUrl.protocol.replace(":", "") : "http") : "https");
+  const proxyOrigin = `${proto}://${reqUrl.host}`;
 
   // Extract query parameters
   let target = reqUrl.searchParams.get("url") || reqUrl.searchParams.get("target");
@@ -379,12 +358,6 @@ async function handleRequest(request, env = {}, ctx = null) {
     } catch {}
   }
 
-  // Auto-inject shiro_watch cookie for Shiro stream playback
-  if (targetUrl.hostname.toLowerCase().includes("shiro") && !upstreamHeaders.has("Cookie")) {
-    const sc = await getShiroProxyCookie();
-    if (sc) upstreamHeaders.set("Cookie", sc);
-  }
-
   const isCfHost = targetUrl.hostname.toLowerCase().includes("settlar") ||
                    targetUrl.hostname.toLowerCase().includes("anipm");
 
@@ -444,21 +417,6 @@ async function handleRequest(request, env = {}, ctx = null) {
           }
         );
       }
-    }
-  }
-
-  // If Shiro returns 403 (cookie expired), refresh cookie and retry once
-  if (upstreamResponse?.status === 403 && targetUrl.hostname.toLowerCase().includes("shiro")) {
-    const freshCookie = await getShiroProxyCookie(true);
-    if (freshCookie) {
-      upstreamHeaders.set("Cookie", freshCookie);
-      try {
-        upstreamResponse = await fetch(targetUrl.href, {
-          method: request.method,
-          headers: upstreamHeaders,
-          redirect: "follow",
-        });
-      } catch {}
     }
   }
 
