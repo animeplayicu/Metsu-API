@@ -10,6 +10,7 @@ import {
 } from "../core/new-provider-utils.js";
 import { get, set, isFresh, SHOW_IDENTITY_TTL } from "../core/smartcache.js";
 import { MAL_TO_ANIWAVES, ANILIST_TO_ANIWAVES } from "../mappings/aniwaves.js";
+import { wreqFetch } from "../core/wreq.js";
 
 const BASE = "https://aniwaves.ru";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36";
@@ -61,21 +62,37 @@ function searchQueries(titles) {
 }
 
 async function fetchText(url, headers = {}) {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent": UA,
-      "Accept-Language": "en-US,en;q=0.9",
-      ...headers,
-    },
-    signal: AbortSignal.timeout(6000),
-  });
-  const raw = await response.text();
-  if (!response.ok) {
-    const error = new Error(`AniWaves HTTP ${response.status}: ${url}`);
-    error.rawBody = raw;
-    throw error;
+  const reqHeaders = {
+    "User-Agent": UA,
+    "Accept-Language": "en-US,en;q=0.9",
+    ...headers,
+  };
+  try {
+    const response = await wreqFetch(url, {
+      session: "aniwaves",
+      headers: reqHeaders,
+      signal: AbortSignal.timeout(15000),
+    });
+    const raw = await response.text();
+    if (!response.ok) {
+      const error = new Error(`AniWaves HTTP ${response.status}: ${url}`);
+      error.rawBody = raw;
+      throw error;
+    }
+    return raw;
+  } catch (wreqErr) {
+    const response = await fetch(url, {
+      headers: reqHeaders,
+      signal: AbortSignal.timeout(15000),
+    });
+    const raw = await response.text();
+    if (!response.ok) {
+      const error = new Error(`AniWaves HTTP ${response.status}: ${url}`);
+      error.rawBody = raw;
+      throw error;
+    }
+    return raw;
   }
-  return raw;
 }
 
 async function fetchAjax(path, referer) {
@@ -433,7 +450,11 @@ async function resolveSource(source, referer) {
   const extractor = findVideoExtractor(source.url);
   if (!extractor) return [];
   try {
-    const streams = await extractor.extract(source.url, { userAgent: UA, referer });
+    const streams = await extractor.extract(source.url, {
+      userAgent: UA,
+      referer,
+      fetchImpl: (u, o) => wreqFetch(u, { session: "aniwaves", ...o }).catch(() => fetch(u, o)),
+    });
     return streams.map((stream) => typeof stream === "string" ? { url: stream, type: "hls" } : stream);
   } catch {
     return [];
