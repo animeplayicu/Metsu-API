@@ -3,12 +3,83 @@ import { getMedia } from '../core/anilist.js';
 import { extractFlixcloud } from "../extractors/index.js";
 import { buildTitleSearchQueries, buildTitles } from '../core/new-provider-utils.js';
 import { get as cacheGet, set as cacheSet, isFresh as cacheIsFresh, SHOW_IDENTITY_TTL } from '../core/smartcache.js';
+import proxyHandler from '../proxy/_worker.js';
 
 var BASE = "https://reanime.to";
 var FLIX = "https://flixcloud.cc";
+var ANIDREAM_BASE = "https://anidream.to";
+var ANIDREAM_FLIX_FN = "5ebed94ee2be52c6280fe2b832298a7f8a78c1dc67d7f28b42231743b2ebde1a";
 var ANIZIP2 = "https://api.ani.zip/mappings";
 var UA5 = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 var H = { "User-Agent": UA5, Accept: "application/json, */*" };
+
+function buildAniDreamPayload(anilistId, episode, dub = false, server = 2) {
+  return {
+    t: {
+      t: 10,
+      i: 0,
+      p: {
+        k: ["data"],
+        v: [
+          {
+            t: 10,
+            i: 1,
+            p: {
+              k: ["anilistId", "episode", "dub", "server"],
+              v: [
+                { t: 0, s: Number(anilistId) },
+                { t: 0, s: Number(episode) },
+                { t: 2, s: dub ? 2 : 3 },
+                { t: 0, s: Number(server) }
+              ]
+            },
+            o: 0
+          }
+        ]
+      },
+      o: 0
+    },
+    f: 127,
+    m: []
+  };
+}
+
+function unpackSeroval(node) {
+  if (!node || typeof node !== "object") return node;
+  if (node.t === 0) return node.s;
+  if (node.t === 1) return node.s;
+  if (node.t === 2) return node.s === 2;
+  if (node.t === 9 && Array.isArray(node.a)) return node.a.map(unpackSeroval);
+  if (node.t === 10 && node.p?.k && node.p?.v) {
+    const obj = {};
+    node.p.k.forEach((key, idx) => {
+      obj[key] = unpackSeroval(node.p.v[idx]);
+    });
+    return obj;
+  }
+  if (node.t === 11) return {};
+  return node;
+}
+
+async function fetchAniDreamStream(anilistId, ep, dub = false, server = 2) {
+  const payload = buildAniDreamPayload(anilistId, ep, dub, server);
+  const url = `${ANIDREAM_BASE}/_serverFn/${ANIDREAM_FLIX_FN}?payload=${encodeURIComponent(JSON.stringify(payload))}`;
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": UA5,
+      "x-tsr-serverFn": "true",
+      "Accept": "application/json, text/plain, */*",
+      "Referer": `${ANIDREAM_BASE}/watch?id=${anilistId}&n=${ep}`
+    }
+  });
+  if (!res.ok) throw new Error(`AniDream RPC status ${res.status}`);
+  const json = await res.json();
+  const unpacked = unpackSeroval(json);
+  if (unpacked?.result?.ok && unpacked?.result?.data?.streamUrl) {
+    return unpacked.result.data;
+  }
+  throw new Error(unpacked?.result?.message || "No streamUrl from AniDream RPC");
+}
 async function searchReanime(query, genre = null) {
   const params = new URLSearchParams({ q: query, limit: 10 });
   if (genre) params.set("genre", genre);
@@ -190,6 +261,55 @@ async function resolveStream3(anilistId, audio, ep) {
   const order = { "HD-2": 0, "HD-1": 1 };
   const byPrio = (arr) => arr.slice().sort((a, b) => (order[a.serverName] ?? 9) - (order[b.serverName] ?? 9));
   const audioTypes = audio === "sub" ? ["sub", "s-sub"] : ["dub", "s-dub"];
+
+  // 0. ULTRA-FAST-PATH: AniDream direct pre-decrypted RPC stream (No WASM / cipher decryption required!)
+  try {
+    const isDub = audio === "dub";
+    const adData = await fetchAniDreamStream(anilistId, ep, isDub);
+    if (adData?.streamUrl) {
+      const topStream = {
+        url: adData.streamUrl,
+        key: null,
+        playlist_key: null,
+        subtitles: Array.isArray(adData.subtitles) ? adData.subtitles : [],
+        thumbnails_vtt: adData.thumbnailsVtt || null,
+        video_title: null,
+        intro_chapter: adData.chapters?.find(c => c.type === "intro" || c.title?.toLowerCase().includes("intro")) || null,
+        outro_chapter: adData.chapters?.find(c => c.type === "outro" || c.title?.toLowerCase().includes("credit") || c.title?.toLowerCase().includes("outro")) || null,
+      };
+
+      const serverItem = {
+        serverName: "HD-2",
+        dataType: audio,
+        dataLink: `https://flixcloud.cc/e/${adData.fileCode || ""}?v=2`
+      };
+
+      // Non-blocking series lookup for title/slug
+      let series = null;
+      try {
+        series = await Promise.race([
+          resolveSeries(anilistId),
+          new Promise((r) => setTimeout(() => r(null), 120))
+        ]);
+      } catch {}
+
+      const title2 = series?.title || `AniList-${anilistId}`;
+      const slug = series?.animeId || String(anilistId);
+
+      return {
+        title: title2,
+        slug,
+        watchData: null,
+        stream: topStream,
+        server: "HD-2",
+        servers: [serverItem],
+        streams: [{ server: serverItem, stream: topStream, index: 0 }],
+        failedServers: []
+      };
+    }
+  } catch (adErr) {
+    // Graceful fallback to existing Flixcloud / Reanime pipeline
+  }
 
   // 1. FAST-PATH: Direct /api/flix/${anilistId}/${ep} without blocking on title search
   let flixData = null;
@@ -380,7 +500,7 @@ async function handleWatch3(anilistId, audio, epNum, origin) {
   });
 }
 __name(handleWatch3, "handleWatch");
-async function handleStream3(anilistId, audio, epNum) {
+async function handleStream3(anilistId, audio, epNum, request = null, env = {}) {
   if (audio !== "sub" && audio !== "dub") return json3({ error: "audio must be sub or dub" }, 400);
   const ep = parseInt(epNum);
   if (isNaN(ep)) return json3({ error: `Invalid episode: ${epNum}` }, 400);
@@ -392,18 +512,40 @@ async function handleStream3(anilistId, audio, epNum) {
   }
   const topKey = resolved.stream?.key ?? resolved.stream?.playlist_key ?? null;
   const target = buildReanimeProxyUrl(resolved.stream?.url, topKey, `${FLIX}/`) || resolved.stream?.url;
-  return new Response(null, {
-    status: 302,
+
+  const reqUrl = request ? new URL(request.url) : null;
+  if (reqUrl && reqUrl.searchParams.get("redirect") === "true") {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        "Location": target,
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "public, max-age=1800"
+      }
+    });
+  }
+
+  // DIRECT STREAMING: Return 200 OK directly with rewritten M3U8 content!
+  // Zero 302 redirect round-trip overhead!
+  const reqHost = reqUrl ? reqUrl.host : `localhost:${process.env.PORT || 3020}`;
+  const proto = reqUrl?.protocol || "http:";
+  const proxyUrl = `${proto}//${reqHost}${target}`;
+
+  const proxyRequest = new Request(proxyUrl, {
+    method: "GET",
     headers: {
-      "Location": target,
-      "Access-Control-Allow-Origin": "*",
-      "Cache-Control": "no-store"
-    }
+      "User-Agent": request?.headers?.get("User-Agent") || UA5,
+      Accept: "*/*",
+      Referer: request?.headers?.get("Referer") || `${FLIX}/`,
+      Origin: request?.headers?.get("Origin") || `https://${reqHost}`,
+    },
   });
+
+  return proxyHandler.fetch(proxyRequest, env);
 }
 __name(handleStream3, "handleStream");
 var reanime_default = {
-  async fetch(request) {
+  async fetch(request, env = {}) {
     const url = new URL(request.url);
     const path = url.pathname;
     if (request.method === "OPTIONS") {
@@ -417,7 +559,7 @@ var reanime_default = {
       m = path.match(/^\/watch\/(\d+)\/(sub|dub)\/(\d+)$/);
       if (m) return await handleWatch3(m[1], m[2], m[3], url.origin);
       m = path.match(/^\/stream\/(\d+)\/(sub|dub)\/(\d+)$/);
-      if (m) return await handleStream3(m[1], m[2], m[3]);
+      if (m) return await handleStream3(m[1], m[2], m[3], request, env);
       return json3({ error: "Not found", routes: ["GET /episodes/:anilistId", "GET /watch/:anilistId/sub|dub/:ep", "GET /stream/:anilistId/sub|dub/:ep"] }, 404);
     } catch (err) {
       return json3({ error: err.message, "Raw-ERROR": err.rawBody ?? null, ...err.debug ? { debug: err.debug } : {}, stack: err.stack }, 500);

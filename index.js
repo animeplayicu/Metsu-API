@@ -13,18 +13,21 @@ import animedunyaHandler           from "./providers/animedunya.js";
 import animeonsenHandler           from "./providers/animeonsen.js";
 import anipmHandler                from "./providers/anipm.js";
 import anipmbetaHandler            from "./providers/anipmbeta.js";
+import anicloverHandler            from "./providers/aniclover.js";
 import { getEpisodesResponse, getFilteredEpisodesResponse } from "./core/episode-cache.js";
 import { resolveProviders }         from "./core/episode-strategy.js";
 import { getAsync, setAsync, isFresh, mapTTL, WATCH_TTL, _CACHE_ENABLED } from "./core/smartcache.js";
 import proxyHandler from "./proxy/_worker.js";
+import { isDomainAllowed, validateRequestOrigin, getCorsHeaders } from "./core/auth-origins.js";
 
-function json(data, status = 200) {
+function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data, null, 2), {
     status,
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
       "Cache-Control": "public, max-age=300",
+      ...extraHeaders,
     },
   });
 }
@@ -72,13 +75,33 @@ export default {
     const url  = new URL(request.url);
     const path = url.pathname;
 
+    const corsHeaders = getCorsHeaders(request);
+
     if (request.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
+        headers: corsHeaders,
+      });
+    }
+
+    // Whitelist Domain & Origin Protection
+    if (!validateRequestOrigin(request)) {
+      return new Response(JSON.stringify({ error: "Forbidden: Unauthorized domain" }), {
+        status: 403,
         headers: {
-          "Access-Control-Allow-Origin":  "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
-          "Access-Control-Allow-Headers": "*",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "null",
+        },
+      });
+    }
+
+    // Block root landing page and docs
+    if (path === "/" || path === "" || path === "/docs" || path === "/index.html") {
+      return new Response(JSON.stringify({ error: "Not found" }), {
+        status: 404,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
         },
       });
     }
@@ -155,14 +178,15 @@ export default {
       const [, id, audio, ep] = m;
       return cachedWatch(
         `watch:reanime:${id}:${audio}:${ep}`,
-        () => reanimeHandler.fetch(rewriteRequest(request, `/watch/${id}/${audio}/${ep}`))
+        () => reanimeHandler.fetch(rewriteRequest(request, `/watch/${id}/${audio}/${ep}`), env),
+        SIGNED_STREAM_WATCH_TTL
       );
     }
 
     m = path.match(/^\/stream\/reanime\/(\d+)\/(sub|dub)\/(\d+)\/?$/);
     if (m) {
       const [, id, audio, ep] = m;
-      return reanimeHandler.fetch(rewriteRequest(request, `/stream/${id}/${audio}/${ep}`));
+      return reanimeHandler.fetch(rewriteRequest(request, `/stream/${id}/${audio}/${ep}`), env);
     }
 
     m = path.match(/^\/stream\/anikoto\/(\d+)\/(sub|dub)\/(\d+)\/?$/);
@@ -283,59 +307,45 @@ export default {
       const [, id, audio, ep] = m;
       return cachedWatch(
         `watch:anipmbeta:${id}:${audio}:${ep}`,
-        () => anipmbetaHandler.fetch(request)
+        () => anipmbetaHandler.fetch(request, env)
       );
     }
 
     m = path.match(/^\/stream\/anipmbeta\/(\d+)\/(sub|dub|multi)\/(\d+)\/?$/);
     if (m) {
-      return anipmbetaHandler.fetch(request);
+      return anipmbetaHandler.fetch(request, env);
     }
 
     m = path.match(/^\/episodes\/anipmbeta\/(\d+)\/?$/);
     if (m) {
-      return anipmbetaHandler.fetch(request);
+      return anipmbetaHandler.fetch(request, env);
     }
 
-    return json({
-      name: "Metsu API 2.2.1",
-      cache: _CACHE_ENABLED,
-      providers: [
-        "mkissa",
-        "reanime",
-        "anikoto",
-        "animegg",
-        "animenosub",
-        "anizone",
-        "aniwaves",
-        "senshi",
-        "kaa",
-        "animedunya",
-        "animeonsen",
-        "anipm",
-        "anipmbeta",
-      ],
-      routes: [
-        "/map/:anilistId",
-        "/episodes/:anilistId",
-        "/episodes/:provider[/:provider...]/:anilistId?map=true|false",
-        "/watch/mkissa/:id/sub|dub/mkissa-:ep",
-        "/watch/reanime/:id/sub|dub/reanime-:ep",
-        "/stream/reanime/:id/sub|dub/:ep",
-        "/watch/anikoto/:id/sub|dub/anikoto-:ep",
-        "/watch/animegg/:id/sub|dub/animegg-:ep",
-        "/watch/animenosub/:id/sub|dub/animenosub-:ep",
-        "/watch/anizone/:id/sub|dub/anizone-:ep",
-        "/watch/aniwaves/:id/sub|dub/aniwaves-:ep",
-        "/watch/senshi/:id/sub|dub/senshi-:ep",
-        "/watch/kaa/:id/sub|dub/kaa-:ep",
-        "/watch/animedunya/:id/sub|dub/animedunya-:ep",
-        "/watch/animeonsen/:id/sub|dub/animeonsen-:ep",
-        "/watch/anipm/:id/sub|dub/anipm-:ep",
-        "/stream/anipm/:id/sub|dub/:ep",
-        "/watch/anipmbeta/:id/sub|dub/:ep",
-        "/stream/anipmbeta/:id/sub|dub/:ep",
-      ],
+    m = path.match(/^\/watch\/aniclover\/(\d+)\/(sub|dub|multi)\/(?:aniclover-)?(\d+)\/?$/);
+    if (m) {
+      const [, id, audio, ep] = m;
+      return cachedWatch(
+        `watch:aniclover:${id}:${audio}:${ep}`,
+        () => anicloverHandler.fetch(request)
+      );
+    }
+
+    m = path.match(/^\/stream\/aniclover\/(\d+)\/(sub|dub|multi)\/(\d+)\/?$/);
+    if (m) {
+      return anicloverHandler.fetch(request);
+    }
+
+    m = path.match(/^\/episodes\/aniclover\/(\d+)\/?$/);
+    if (m) {
+      return anicloverHandler.fetch(request);
+    }
+
+    return new Response(JSON.stringify({ error: "Not found" }), {
+      status: 404,
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders,
+      },
     });
   },
 };

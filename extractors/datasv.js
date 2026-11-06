@@ -1,7 +1,11 @@
 const DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36";
 
 export function canExtractDataSv(url) {
-  return /play\.echovideo\.ru\/embed-(?:20|21|\d+)\//i.test(String(url));
+  const str = String(url);
+  return (
+    /(?:echovideo|vhscdn|vidplay|mycloud|mcloud|vizcloud)\.[a-z0-9.-]+\/embed-(?:1[45]|2[01]|\d{2,})\//i.test(str) ||
+    /\/embed-(?:1[45]|2[01]|\d{2,})\/[a-zA-Z0-9_-]+/i.test(str)
+  );
 }
 
 export async function extractDataSv(embedUrl, { fetchImpl = fetch, userAgent = DEFAULT_USER_AGENT } = {}) {
@@ -11,7 +15,10 @@ export async function extractDataSv(embedUrl, { fetchImpl = fetch, userAgent = D
   const [, embedNum, id] = match;
   const endpoint = new URL(`/embed-${embedNum}/getSources`, url.origin);
   endpoint.searchParams.set("id", id);
-  const response = await fetchImpl(endpoint, {
+  for (const [k, v] of url.searchParams.entries()) {
+    if (k !== "id") endpoint.searchParams.set(k, v);
+  }
+  const response = await fetchImpl(endpoint.href, {
     headers: {
       "User-Agent": userAgent,
       "Referer": embedUrl,

@@ -88,6 +88,38 @@ async function resolveSeries(anilistId, ctx = {}) {
   const cached = get(key);
   if (isFresh(cached)) return cached.data;
   const media = ctx.media ?? await getMedia(anilistId);
+
+  // 1. Fast-Path: Direct Partner API lookup by AniList ID (1 API call)
+  try {
+    const partnerUrl = new URL(`/api/partner/v1/series/${encodeURIComponent(anilistId)}`, SITE);
+    const partnerData = await requestJson(partnerUrl.href);
+    const seriesUrl = partnerData?.data?.url;
+    const match = seriesUrl?.match(/-(\d+)-[a-z0-9]+$/);
+    const internalId = match ? match[1] : null;
+
+    if (internalId) {
+      const candidate = {
+        id: String(internalId),
+        source: "settlar",
+        title: partnerData.data?.title || media?.title?.english || media?.title?.romaji || "",
+      };
+      const data = await bootstrap(candidate, 1, "sub");
+      const core = verifyBootstrap(data, media);
+      const episodes = Array.isArray(core.episodes) ? core.episodes : [];
+      if (episodes.length) {
+        const series = {
+          ...candidate,
+          title: core.title || candidate.title,
+          episodes,
+          packages: data.anipmPackages?.episodes ?? data.packages?.episodes ?? {},
+        };
+        set(key, series, SHOW_IDENTITY_TTL);
+        return series;
+      }
+    }
+  } catch {}
+
+  // 2. Slow-Path Fallback: Search queries across titles
   const titles = titleVariants(media, ctx.anizip);
   if (!titles.length) throw new Error(`Ani.pm has no AniList titles for ${anilistId}`);
   const candidates = new Map();

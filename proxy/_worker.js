@@ -9,11 +9,55 @@
 const DEFAULT_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
 
+const ALLOWED_DOMAINS = [
+  "animetsu.site",
+  "animetsu.me",
+  "animetsu.de",
+  "animetsu.us",
+  "aniflix.uno",
+  "aniflix.in",
+  "aniflix.us",
+  "localhost",
+  "127.0.0.1",
+  "flixcloud.cc",
+  "reanime.to",
+  "anidream.to",
+  "beta.cno.to",
+  "cno.to",
+  "ani.pm",
+];
+
+function isOriginAllowed(originOrReferer) {
+  if (!originOrReferer) return true;
+  try {
+    const host = new URL(originOrReferer).hostname.toLowerCase();
+    return ALLOWED_DOMAINS.some((d) => host === d || host.endsWith("." + d));
+  } catch {
+    return false;
+  }
+}
+
+function getDynamicCorsHeaders(request) {
+  const origin = request.headers.get("origin") || request.headers.get("Origin");
+  let allowOrigin = "https://animetsu.site";
+  if (origin && isOriginAllowed(origin)) {
+    allowOrigin = origin;
+  }
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "*",
+    "Access-Control-Expose-Headers": "Content-Length, Content-Range, Accept-Ranges",
+    "Vary": "Origin",
+  };
+}
+
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://animetsu.site",
   "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
   "Access-Control-Allow-Headers": "*",
   "Access-Control-Expose-Headers": "Content-Length, Content-Range, Accept-Ranges",
+  "Vary": "Origin",
 };
 
 const FLIX_SEGMENT_XOR_KEY = new Uint8Array([
@@ -137,6 +181,22 @@ function detectDefaultHeaders(targetUrl) {
     };
   }
 
+  // AniClover / Zanora
+  if (host.includes("zanora") || host.includes("aniclover")) {
+    return {
+      referer: "https://aniclover.cc/",
+      origin: "https://aniclover.cc",
+    };
+  }
+
+  // Echovideo / Vidplay / VHS CDN / AniWaves
+  if (host.includes("echovideo") || host.includes("vhscdn") || host.includes("vidplay")) {
+    return {
+      referer: "https://play.vhscdn.to/",
+      origin: "https://play.vhscdn.to",
+    };
+  }
+
   // Anikoto / MegaPlay / HiAnime / RapidCloud
   if (host.includes("anikoto")) {
     return {
@@ -180,6 +240,17 @@ function detectDefaultHeaders(targetUrl) {
     return {
       referer: "https://embed.settlar.io/",
       origin: "https://embed.settlar.io",
+    };
+  }
+
+  // Cno.to (AniPM Beta)
+  if (host.includes("cno.to")) {
+    return {
+      referer: "https://beta.cno.to/",
+      origin: "https://beta.cno.to",
+      extraHeaders: {
+        "x-anitv-peek": "1",
+      },
     };
   }
 
@@ -248,15 +319,111 @@ function rewriteM3U8(content, baseUrl, proxyOrigin, context) {
 }
 
 /**
+ * Cloudflare Edge-Cached CNO.TO Library Handler (6-hour Global CDN Cache)
+ * Zero VPS RAM: Cloudflare Edge serves single-anime metadata (~150 bytes) directly from CDN cache.
+ */
+async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
+  const rawId = reqUrl.searchParams.get("id") || reqUrl.searchParams.get("anilistId") || reqUrl.pathname.split("/").pop();
+  const anilistId = Number(rawId);
+  const cacheKey = new Request("https://beta.cno.to/library.json");
+  const cache = typeof caches !== "undefined" ? caches.default : null;
+  let cachedResponse = cache ? await cache.match(cacheKey) : null;
+
+  if (!cachedResponse) {
+    const upstream = await fetch("https://beta.cno.to/library.json", {
+      headers: {
+        "User-Agent": DEFAULT_UA,
+        Referer: "https://beta.cno.to/",
+        "x-anitv-peek": "1",
+      },
+      cf: {
+        cacheTtl: 21600, // 6 hours on Cloudflare Global Edge CDN
+        cacheEverything: true,
+      },
+    });
+
+    if (!upstream.ok) {
+      return new Response(JSON.stringify({ error: `Upstream cno.to library HTTP ${upstream.status}` }), {
+        status: 502,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
+
+    const text = await upstream.text();
+    const cacheHeaders = new Headers({
+      "Content-Type": "application/json",
+      "Cache-Control": "public, max-age=21600, s-maxage=21600",
+      ...CORS_HEADERS,
+    });
+    cachedResponse = new Response(text, { status: 200, headers: cacheHeaders });
+
+    if (cache) {
+      ctx?.waitUntil?.(cache.put(cacheKey, cachedResponse.clone())) || await cache.put(cacheKey, cachedResponse.clone()).catch(() => {});
+    }
+  }
+
+  // If specific ID requested, return ONLY that anime's metadata (~150 bytes, zero VPS RAM!)
+  if (Number.isFinite(anilistId) && anilistId > 0) {
+    const data = await cachedResponse.json();
+    const item = data.titles?.find((t) => t.id === anilistId);
+    if (!item) {
+      return new Response(JSON.stringify({ error: "Anime not found in cno library" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
+    return new Response(JSON.stringify(item.lib), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=21600, s-maxage=21600",
+        "CF-Cache-Status": "HIT",
+        ...CORS_HEADERS,
+      },
+    });
+  }
+
+  // If entire library requested, return full JSON with 6-hour CDN cache
+  return new Response(cachedResponse.body, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "public, max-age=21600, s-maxage=21600",
+      ...CORS_HEADERS,
+    },
+  });
+}
+
+/**
  * Main Request Handler
  */
 async function handleRequest(request, env = {}, ctx = null) {
+  // Validate Origin and Referer
+  const reqOrigin = request.headers.get("origin") || request.headers.get("Origin");
+  const reqReferer = request.headers.get("referer") || request.headers.get("Referer");
+  if ((reqOrigin && !isOriginAllowed(reqOrigin)) || (reqReferer && !isOriginAllowed(reqReferer))) {
+    return new Response(JSON.stringify({ error: "Forbidden: Unauthorized domain" }), {
+      status: 403,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "null",
+      },
+    });
+  }
+
   // Handle CORS preflight
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
-      headers: CORS_HEADERS,
+      headers: getDynamicCorsHeaders(request),
     });
+  }
+
+  const reqUrl = new URL(request.url);
+
+  // Cloudflare Global CDN endpoint for cno.to Library (6-hour Edge Cache)
+  if (reqUrl.pathname.includes("/cno-library") || reqUrl.searchParams.has("cno_library")) {
+    return handleCnoLibrary(request, reqUrl, env, ctx);
   }
 
   // Cloudflare Native Edge Cache: check if response already cached in Cloudflare CDN Edge
@@ -274,7 +441,6 @@ async function handleRequest(request, env = {}, ctx = null) {
     }
   }
 
-  const reqUrl = new URL(request.url);
   const forwardedProto = request.headers.get("x-forwarded-proto");
   const isLocal = reqUrl.hostname === "localhost" || reqUrl.hostname.startsWith("127.");
   const proto = forwardedProto || (isLocal ? (reqUrl.protocol ? reqUrl.protocol.replace(":", "") : "http") : "https");
@@ -282,6 +448,25 @@ async function handleRequest(request, env = {}, ctx = null) {
 
   // Extract query parameters
   let target = reqUrl.searchParams.get("url") || reqUrl.searchParams.get("target");
+
+  // Support /proxy?https://... or /proxy? https://... (without url= parameter)
+  if (!target && reqUrl.search) {
+    const rawQuery = reqUrl.search.replace(/^\?/, "").trim();
+    if (/^https?:\/\//i.test(rawQuery)) {
+      target = rawQuery;
+    } else {
+      try {
+        const decoded = decodeURIComponent(rawQuery).trim();
+        if (/^https?:\/\//i.test(decoded)) target = decoded;
+      } catch {}
+    }
+  }
+
+  // Support /proxy/https://... (path-based)
+  if (!target && reqUrl.pathname.startsWith("/proxy/http")) {
+    target = reqUrl.pathname.replace(/^\/proxy\//, "") + (reqUrl.search || "");
+  }
+
   const keyParam = reqUrl.searchParams.get("key") || reqUrl.searchParams.get("playlist_key") || "";
   const refererParam = reqUrl.searchParams.get("ref") || reqUrl.searchParams.get("referer") || "";
 
@@ -348,6 +533,13 @@ async function handleRequest(request, env = {}, ctx = null) {
     upstreamHeaders.set("Range", range);
   }
 
+  // Apply auto-detected extra headers (e.g. x-anitv-peek for cno.to)
+  if (detected.extraHeaders) {
+    for (const [k, v] of Object.entries(detected.extraHeaders)) {
+      upstreamHeaders.set(k, v);
+    }
+  }
+
   // Parse additional custom headers from JSON if provided
   if (customHeadersParam) {
     try {
@@ -359,7 +551,8 @@ async function handleRequest(request, env = {}, ctx = null) {
   }
 
   const isCfHost = targetUrl.hostname.toLowerCase().includes("settlar") ||
-                   targetUrl.hostname.toLowerCase().includes("anipm");
+                   targetUrl.hostname.toLowerCase().includes("anipm") ||
+                   targetUrl.hostname.toLowerCase().includes("cno.to");
 
   let upstreamResponse;
   const wreq = await getWreqFetch();
@@ -530,6 +723,54 @@ async function handleRequest(request, env = {}, ctx = null) {
       }
 
       return playlistResponse;
+    }
+
+    // JSON response auto-rewriter (e.g. for AniClover api/watch JSON)
+    if (rawContentType.includes("application/json") || rawContentType.includes("text/json")) {
+      let jsonText = new TextDecoder("utf-8").decode(arrayBuf);
+      try {
+        const data = JSON.parse(jsonText);
+        const rewriteUrl = (u) => {
+          if (typeof u === "string" && (u.includes("zanora.xyz") || u.includes("m3u8-proxy"))) {
+            return `${proxyOrigin}/proxy?url=${encodeURIComponent(u)}&ref=https%3A%2F%2Faniclover.cc%2F`;
+          }
+          return u;
+        };
+
+        if (data.streamUrl) data.streamUrl = rewriteUrl(data.streamUrl);
+        if (Array.isArray(data.streams)) {
+          for (const s of data.streams) {
+            if (s.url) s.url = rewriteUrl(s.url);
+          }
+        }
+        if (Array.isArray(data.sources)) {
+          for (const s of data.sources) {
+            if (s.file) s.file = rewriteUrl(s.file);
+          }
+        }
+        if (Array.isArray(data.subtitles)) {
+          for (const s of data.subtitles) {
+            if (s.url) s.url = rewriteUrl(s.url);
+            if (s.file) s.file = rewriteUrl(s.file);
+          }
+        }
+        if (Array.isArray(data.tracks)) {
+          for (const t of data.tracks) {
+            if (t.file) t.file = rewriteUrl(t.file);
+          }
+        }
+        if (data.thumbnails) data.thumbnails = rewriteUrl(data.thumbnails);
+        jsonText = JSON.stringify(data, null, 2);
+      } catch {}
+
+      return new Response(jsonText, {
+        status: upstreamResponse.status,
+        headers: {
+          ...CORS_HEADERS,
+          "Content-Type": "application/json",
+          "Cache-Control": "public, max-age=300",
+        },
+      });
     }
 
     // Binary key or other text response

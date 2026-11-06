@@ -1,35 +1,10 @@
 import "dotenv/config";
 import http from "node:http";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
-import { Readable } from "node:stream";
 import worker from "./index.js";
+import { validateRequestOrigin } from "./core/auth-origins.js";
 
 const PORT  = Number(process.env.PORT) || 4000;
 const BASE  = process.env.BASE_PATH ?? "";
-const __dir = dirname(fileURLToPath(import.meta.url));
-
-const STATIC = {
-  "/":          { file: "docs/landing.html", mime: "text/html" },
-  "/docs":      { file: "docs/index.html",   mime: "text/html" },
-  "/style.css": { file: "docs/style.css",    mime: "text/css"  },
-  "/logo.svg":  { file: "docs/logo.svg",     mime: "image/svg+xml" },
-};
-
-function serveStatic(res, entry) {
-  try {
-    const body = readFileSync(join(__dir, entry.file));
-    res.writeHead(200, {
-      "Content-Type":  entry.mime + "; charset=utf-8",
-      "Cache-Control": "no-cache",
-    });
-    res.end(body);
-  } catch {
-    res.writeHead(404);
-    res.end("Not found");
-  }
-}
 
 async function nodeToRequest(req) {
   const host     = req.headers["host"] ?? `localhost:${PORT}`;
@@ -53,14 +28,23 @@ const server = http.createServer(async (req, res) => {
   console.log(`→ ${req.method} ${req.url}`);
 
   const pathname = req.url.split("?")[0];
-  const staticEntry = STATIC[pathname];
-
-  if (req.method === "GET" && staticEntry) {
-    return serveStatic(res, staticEntry);
+  if (pathname === "/" || pathname === "/docs" || pathname === "/index.html") {
+    res.writeHead(404, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify({ error: "Not found" }));
   }
 
   try {
-    const request  = await nodeToRequest(req);
+    const request = await nodeToRequest(req);
+
+    // Whitelist domain validation (Origin & Referer check)
+    if (!validateRequestOrigin(request)) {
+      res.writeHead(403, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "null",
+      });
+      return res.end(JSON.stringify({ error: "Forbidden: Unauthorized domain" }));
+    }
+
     const response = await worker.fetch(request, {});
 
     res.statusCode = response.status;

@@ -393,16 +393,21 @@ function parseServerGroups(html) {
       const isMulti = svId === "15" || /mul-?aud/i.test(rawName);
       const isDatSaV = svId === "14" || /datsav/i.test(rawName);
       const isVidplay = svId === "4" || /vidplay/i.test(rawName) || /echovideo/i.test(rawName);
-      const isDirect = isDatSaV || isMulti || isVidplay;
+
+      // Skip DatSaV MP4 to optimize speed and keep only Vidplay (HLS) & MuL-AuD (Multi-Audio)
+      if (isDatSaV) continue;
+
+      const isDirect = isMulti || isVidplay;
       let displayName = rawName;
       if (isMulti) displayName = "MuL-AuD (Multi-Audio)";
-      else if (isDatSaV) displayName = "DatSaV (Direct MP4)";
+      else if (isVidplay) displayName = "Vidplay";
       groups.push({
         audio: current.type,
         linkId,
         serverId: svId,
         server: displayName,
         isMultiAudio: isMulti,
+        isVidplay,
         isDirect,
       });
     }
@@ -494,7 +499,7 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
   });
   if (!allMatchingServers.length) throw new Error(`AniWaves has no ${audio} servers for episode ${epNum}`);
 
-  // Fast-path: Prioritize direct playable stream servers (DatSaV MP4, MuL-AuD, Vidplay/Echovideo)
+  // Fast-path: Prioritize direct playable stream servers (Vidplay HLS & MuL-AuD Multi-Audio)
   // Skip slow ad-heavy embed servers (BYFMS, DGHG) when direct servers are available
   const directServers = allMatchingServers.filter((server) => server.isDirect);
   const servers = directServers.length > 0 ? directServers : allMatchingServers;
@@ -522,13 +527,11 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     outro ??= skipRange(skip.outro);
     for (const stream of item.direct) {
       const isMuL = item.server.isMultiAudio || stream.isMultiAudio || stream.server === "MuL-AuD";
-      const isDatSaV = item.server.serverId === "14" || stream.server === "DatSaV";
-      const isDirectMp4 = stream.type === "mp4";
+      const isVidplay = item.server.isVidplay || stream.server === "Vidplay" || stream.type === "hls";
       let priority = 4;
-      if (isMuL) priority = 7;
-      else if (isDatSaV) priority = 6;
-      else if (isDirectMp4) priority = 5;
-      else if (stream.type === "hls") priority = 5;
+      if (isVidplay) priority = 8;
+      else if (isMuL) priority = 7;
+      else if (stream.type === "hls") priority = 6;
 
       if (stream.intro) intro ??= skipRange(stream.intro);
       if (stream.outro) outro ??= skipRange(stream.outro);
