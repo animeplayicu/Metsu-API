@@ -43,10 +43,15 @@ export function validateRequestOrigin(request) {
 }
 
 export function getCorsHeaders(request) {
-  const origin = request.headers.get("origin") || request.headers.get("Origin");
+  const origin = request?.headers?.get?.("origin") || request?.headers?.get?.("Origin");
+  const referer = request?.headers?.get?.("referer") || request?.headers?.get?.("Referer");
   let allowOrigin = "https://animetsu.site";
   if (origin && isDomainAllowed(origin)) {
     allowOrigin = origin;
+  } else if (referer && isDomainAllowed(referer)) {
+    try {
+      allowOrigin = new URL(referer).origin;
+    } catch {}
   }
   return {
     "Access-Control-Allow-Origin": allowOrigin,

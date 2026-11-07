@@ -38,10 +38,15 @@ function isOriginAllowed(originOrReferer) {
 }
 
 function getDynamicCorsHeaders(request) {
-  const origin = request.headers.get("origin") || request.headers.get("Origin");
+  const origin = request?.headers?.get?.("origin") || request?.headers?.get?.("Origin");
+  const referer = request?.headers?.get?.("referer") || request?.headers?.get?.("Referer");
   let allowOrigin = "https://animetsu.site";
   if (origin && isOriginAllowed(origin)) {
     allowOrigin = origin;
+  } else if (referer && isOriginAllowed(referer)) {
+    try {
+      allowOrigin = new URL(referer).origin;
+    } catch {}
   }
   return {
     "Access-Control-Allow-Origin": allowOrigin,
@@ -323,6 +328,7 @@ function rewriteM3U8(content, baseUrl, proxyOrigin, context) {
  * Zero VPS RAM: Cloudflare Edge serves single-anime metadata (~150 bytes) directly from CDN cache.
  */
 async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
+  const corsHeaders = getDynamicCorsHeaders(request);
   const rawId = reqUrl.searchParams.get("id") || reqUrl.searchParams.get("anilistId") || reqUrl.pathname.split("/").pop();
   const anilistId = Number(rawId);
   const cacheKey = new Request("https://beta.cno.to/library.json");
@@ -345,7 +351,7 @@ async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
     if (!upstream.ok) {
       return new Response(JSON.stringify({ error: `Upstream cno.to library HTTP ${upstream.status}` }), {
         status: 502,
-        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
@@ -353,7 +359,7 @@ async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
     const cacheHeaders = new Headers({
       "Content-Type": "application/json",
       "Cache-Control": "public, max-age=21600, s-maxage=21600",
-      ...CORS_HEADERS,
+      ...corsHeaders,
     });
     cachedResponse = new Response(text, { status: 200, headers: cacheHeaders });
 
@@ -369,7 +375,7 @@ async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
     if (!item) {
       return new Response(JSON.stringify({ error: "Anime not found in cno library" }), {
         status: 404,
-        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
     return new Response(JSON.stringify(item.lib), {
@@ -378,7 +384,7 @@ async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
         "Content-Type": "application/json",
         "Cache-Control": "public, max-age=21600, s-maxage=21600",
         "CF-Cache-Status": "HIT",
-        ...CORS_HEADERS,
+        ...corsHeaders,
       },
     });
   }
@@ -389,7 +395,7 @@ async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "public, max-age=21600, s-maxage=21600",
-      ...CORS_HEADERS,
+      ...corsHeaders,
     },
   });
 }
@@ -398,6 +404,8 @@ async function handleCnoLibrary(request, reqUrl, env = {}, ctx = null) {
  * Main Request Handler
  */
 async function handleRequest(request, env = {}, ctx = null) {
+  const corsHeaders = getDynamicCorsHeaders(request);
+
   // Validate Origin and Referer
   const reqOrigin = request.headers.get("origin") || request.headers.get("Origin");
   const reqReferer = request.headers.get("referer") || request.headers.get("Referer");
@@ -415,7 +423,7 @@ async function handleRequest(request, env = {}, ctx = null) {
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 204,
-      headers: getDynamicCorsHeaders(request),
+      headers: corsHeaders,
     });
   }
 
@@ -495,7 +503,7 @@ async function handleRequest(request, env = {}, ctx = null) {
       JSON.stringify({ error: "Invalid target URL: " + target }),
       {
         status: 400,
-        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       }
     );
   }
@@ -593,7 +601,7 @@ async function handleRequest(request, env = {}, ctx = null) {
             }),
             {
               status: 502,
-              headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+              headers: { "Content-Type": "application/json", ...corsHeaders },
             }
           );
         }
@@ -606,7 +614,7 @@ async function handleRequest(request, env = {}, ctx = null) {
           }),
           {
             status: 502,
-            headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+            headers: { "Content-Type": "application/json", ...corsHeaders },
           }
         );
       }
@@ -646,7 +654,7 @@ async function handleRequest(request, env = {}, ctx = null) {
     finalBaseUrl.includes(".mp4");
 
   if (isMp4) {
-    const responseHeaders = new Headers(CORS_HEADERS);
+    const responseHeaders = new Headers(corsHeaders);
     responseHeaders.set("Content-Type", "video/mp4");
     responseHeaders.set("Accept-Ranges", "bytes");
 
@@ -710,7 +718,7 @@ async function handleRequest(request, env = {}, ctx = null) {
       const playlistResponse = new Response(rewritten, {
         status: 200,
         headers: {
-          ...CORS_HEADERS,
+          ...corsHeaders,
           "Content-Type": "application/vnd.apple.mpegurl; charset=utf-8",
           "Cache-Control": cacheControl,
           "CDN-Cache-Control": cacheControl,
@@ -766,7 +774,7 @@ async function handleRequest(request, env = {}, ctx = null) {
       return new Response(jsonText, {
         status: upstreamResponse.status,
         headers: {
-          ...CORS_HEADERS,
+          ...corsHeaders,
           "Content-Type": "application/json",
           "Cache-Control": "public, max-age=300",
         },
@@ -777,7 +785,7 @@ async function handleRequest(request, env = {}, ctx = null) {
     return new Response(arrayBuf, {
       status: upstreamResponse.status,
       headers: {
-        ...CORS_HEADERS,
+        ...corsHeaders,
         "Content-Type": rawContentType || "application/octet-stream",
         "Cache-Control": "public, max-age=86400, s-maxage=86400",
         "CDN-Cache-Control": "public, max-age=86400",
@@ -788,7 +796,7 @@ async function handleRequest(request, env = {}, ctx = null) {
   // For media segments (.ts, .m4s, disguised .png / .webp chunks, etc.)
   const { data: segmentBytes, isTs } = unwrapFlixSegment(arrayBuf);
 
-  const responseHeaders = new Headers(CORS_HEADERS);
+  const responseHeaders = new Headers(corsHeaders);
   if (isTs || (segmentBytes.length > 0 && segmentBytes[0] === 0x47)) {
     responseHeaders.set("Content-Type", "video/mp2t");
   } else if (rawContentType) {
