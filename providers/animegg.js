@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { getMedia } from "../core/anilist.js";
 import {
   attr,
@@ -14,6 +16,23 @@ import { get, set, isFresh, SHOW_IDENTITY_TTL } from "../core/smartcache.js";
 import { getMappedSlug } from "../mappings/animegg.js";
 
 const BASE = "https://www.animegg.org";
+
+// Ultra-fast in-memory database cache for sub-20ms endpoint responses
+let ANIMEGG_DB = { by_anilist: {}, by_mal: {}, by_slug: {} };
+let lastDbMtime = 0;
+function loadAnimeggDb() {
+  try {
+    const dbPath = path.resolve(process.cwd(), "data/animegg_database.json");
+    if (fs.existsSync(dbPath)) {
+      const stat = fs.statSync(dbPath);
+      if (stat.mtimeMs > lastDbMtime) {
+        ANIMEGG_DB = JSON.parse(fs.readFileSync(dbPath, "utf8"));
+        lastDbMtime = stat.mtimeMs;
+      }
+    }
+  } catch {}
+}
+loadAnimeggDb();
 
 // In-memory 5-minute cache for series episode lists to avoid redundant scrapes
 const seriesEpisodeCache = new Map();
@@ -369,6 +388,63 @@ async function fetchAniSkip(malId, epNum) {
 }
 
 async function handleWatch(anilistId, audio, epNum, ctx = {}) {
+  // ⚡ 1. SUB-20MS IN-MEMORY CACHE LOOKUP
+  loadAnimeggDb();
+  const cachedAnime = ANIMEGG_DB?.by_anilist?.[String(anilistId)] || ANIMEGG_DB?.by_mal?.[String(anilistId)];
+  const cachedEp = cachedAnime?.episodes?.[String(epNum)];
+  if (cachedEp) {
+    const ref = `${BASE}/`;
+    const streams = (cachedEp.sources || []).map((s, j) => {
+      const proxied = `/proxy?url=${encodeURIComponent(s.url)}&ref=${encodeURIComponent(ref)}`;
+      return {
+        url: proxied,
+        raw_url: s.url,
+        proxied_url: proxied,
+        type: s.url.includes(".m3u8") ? "hls" : "mp4",
+        quality: s.quality,
+        backup: s.backup ? `/proxy?url=${encodeURIComponent(s.backup)}&ref=${encodeURIComponent(ref)}` : null,
+        raw_backup: s.backup,
+        audio: cachedEp.audio || audio,
+        server: "Animegg",
+        embed: cachedEp.embed_url,
+        referer: ref,
+        priority: 5 - j,
+        isActive: j === 0,
+      };
+    });
+
+    if (cachedEp.embed_url) {
+      streams.push({
+        url: cachedEp.embed_url,
+        type: "embed",
+        audio: cachedEp.audio || audio,
+        server: "Animegg-embed",
+        referer: ref,
+        priority: 1,
+        isActive: streams.length === 0,
+      });
+    }
+
+    const topStream = streams.find((s) => s.type === "mp4") || streams[0];
+
+    return json({
+      anilistId: Number(anilistId),
+      episode: Number(epNum),
+      providerEpisode: Number(epNum),
+      audio: cachedEp.audio || audio,
+      requestedAudio: audio,
+      title: cachedEp.title,
+      intro: null,
+      outro: null,
+      stream_url: topStream?.proxied_url || topStream?.url || null,
+      raw_stream_url: topStream?.raw_url || topStream?.url || null,
+      proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
+      streams,
+      source: "animegg-cache",
+    });
+  }
+
+  // 🔄 2. FALLBACK TO LIVE SCRAPE
   const media = ctx.media ?? await getMedia(anilistId);
   const [series, aniSkipData] = await Promise.all([
     resolveSeries(anilistId, { ...ctx, media }),
@@ -403,6 +479,44 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
       s.isActive = s.url === topStream.url && s.quality === topStream.quality;
     }
   }
+
+  // ⚡ 3. WRITE-THROUGH AUTO-UPDATE: Save newly scraped episode into database automatically
+  try {
+    const rawStreams = watch.streams.filter((s) => s.type === "mp4");
+    const embedStream = watch.streams.find((s) => s.type === "embed");
+    const sources = rawStreams.map((s) => ({
+      quality: s.quality,
+      url: s.raw_url || s.url,
+      backup: s.raw_backup || s.backup,
+    }));
+
+    if (!ANIMEGG_DB.by_anilist) ANIMEGG_DB.by_anilist = {};
+    if (!ANIMEGG_DB.by_anilist[String(anilistId)]) {
+      ANIMEGG_DB.by_anilist[String(anilistId)] = {
+        slug: series.slug,
+        anilist_id: Number(anilistId),
+        mal_id: media?.idMal || Number(anilistId),
+        title: series.title,
+        episodes: {},
+      };
+    }
+    if (!ANIMEGG_DB.by_anilist[String(anilistId)].episodes) {
+      ANIMEGG_DB.by_anilist[String(anilistId)].episodes = {};
+    }
+
+    ANIMEGG_DB.by_anilist[String(anilistId)].episodes[String(epNum)] = {
+      title: watch.title,
+      embed_id: embedStream?.embed ? embedStream.embed.split("/").pop() : null,
+      embed_url: embedStream?.embed || embedStream?.url || null,
+      audio: effectiveAudio,
+      sources,
+      stream_url: topStream?.raw_url || topStream?.url || null,
+    };
+
+    // Save to disk asynchronously without slowing down client response
+    const dbPath = path.resolve(process.cwd(), "data/animegg_database.json");
+    fs.promises.writeFile(dbPath, JSON.stringify(ANIMEGG_DB, null, 2), "utf8").catch(() => {});
+  } catch {}
 
   return json({
     anilistId: Number(anilistId),

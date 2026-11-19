@@ -2,6 +2,7 @@ import "dotenv/config";
 import http from "node:http";
 import worker from "./index.js";
 import { validateRequestOrigin } from "./core/auth-origins.js";
+import { runAutoSync } from "./scripts/anikoto_auto_sync.js";
 
 const PORT  = Number(process.env.PORT) || 4000;
 const BASE  = process.env.BASE_PATH ?? "";
@@ -28,6 +29,19 @@ const server = http.createServer(async (req, res) => {
   console.log(`→ ${req.method} ${req.url}`);
 
   const pathname = req.url.split("?")[0];
+  if (pathname === "/sync/anikoto") {
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
+    try {
+      const result = await runAutoSync(15);
+      return res.end(JSON.stringify(result, null, 2));
+    } catch (e) {
+      return res.end(JSON.stringify({ status: "error", message: e.message }));
+    }
+  }
+
   if (pathname === "/" || pathname === "/docs" || pathname === "/index.html") {
     res.writeHead(404, { "Content-Type": "application/json" });
     return res.end(JSON.stringify({ error: "Not found" }));
@@ -80,6 +94,13 @@ process.on("unhandledRejection", (reason) => {
   console.error("Unhandled rejection:", reason);
 });
 
+const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+setInterval(() => {
+  console.log("[Scheduler] ⏰ Running 6-hour scheduled Anikoto Auto-Sync on VPS...");
+  runAutoSync(25).catch((err) => console.error("[Scheduler] Sync error:", err.message));
+}, SIX_HOURS_MS);
+
 server.listen(PORT, () => {
   console.log(`Metsu dev server → http://localhost:${PORT}`);
+  console.log(`[Scheduler] 6-hour Anikoto Auto-Sync is active.`);
 });

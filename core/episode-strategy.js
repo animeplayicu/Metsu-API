@@ -16,6 +16,7 @@ import { getEpisodes as animeonsenEpisodes } from "../providers/animeonsen.js";
 import { getEpisodes as anipmEpisodes }      from "../providers/anipm.js";
 import { getEpisodes as anipmbetaEpisodes }  from "../providers/anipmbeta.js";
 import { getEpisodes as anicloverEpisodes }  from "../providers/aniclover.js";
+import { getEpisodes as gotakuEpisodes }     from "../providers/gotaku.js";
 const inflight  = new Map();
 const bgRunning = new Set();
 
@@ -91,6 +92,7 @@ const PROVIDER_ALIASES = {
   ani:   "anipm",
   anipmbeta: "anipmbeta",
   aniclover: "aniclover",
+  gotaku: "gotaku",
 };
 
 export function resolveProviders(rawNames) {
@@ -120,6 +122,7 @@ function providerFns(anilistId, status, ctx) {
     anipm:      () => withCache(`epv:anipm:${anilistId}`,      status, () => anipmEpisodes(anilistId, ctx)),
     anipmbeta:  () => withCache(`epv:anipmbeta:${anilistId}`,  status, () => anipmbetaEpisodes(anilistId, ctx)),
     aniclover:  () => withCache(`epv:aniclover:${anilistId}`,  status, () => anicloverEpisodes(anilistId, ctx)),
+    gotaku:     () => withCache(`epv:gotaku:${anilistId}`,     status, () => gotakuEpisodes(anilistId, ctx)),
   };
 }
 

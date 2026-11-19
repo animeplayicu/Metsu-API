@@ -14,6 +14,7 @@ import animeonsenHandler           from "./providers/animeonsen.js";
 import anipmHandler                from "./providers/anipm.js";
 import anipmbetaHandler            from "./providers/anipmbeta.js";
 import anicloverHandler            from "./providers/aniclover.js";
+import gotakuHandler               from "./providers/gotaku.js";
 import { getEpisodesResponse, getFilteredEpisodesResponse } from "./core/episode-cache.js";
 import { resolveProviders }         from "./core/episode-strategy.js";
 import { getAsync, setAsync, isFresh, mapTTL, WATCH_TTL, _CACHE_ENABLED } from "./core/smartcache.js";
@@ -219,6 +220,16 @@ export default {
       );
     }
 
+    m = path.match(/^\/embed\/anikoto\/(\d+)\/(?:(sub|dub)\/)?(\d+)\/?$/);
+    if (m) {
+      return anikotoHandler.fetch(request);
+    }
+
+    m = path.match(/^\/download\/anikoto\/(\d+)\/(?:(sub|dub)\/)?(\d+)\/?$/);
+    if (m) {
+      return anikotoHandler.fetch(request);
+    }
+
     m = path.match(/^\/watch\/animegg\/(\d+)\/(sub|dub)\/animegg-(\d+)\/?$/);
     if (m) {
       const [, id, audio, ep] = m;
@@ -338,6 +349,34 @@ export default {
     m = path.match(/^\/episodes\/aniclover\/(\d+)\/?$/);
     if (m) {
       return anicloverHandler.fetch(request);
+    }
+
+    m = path.match(/^\/watch\/gotaku\/([a-zA-Z0-9_-]+)\/(sub|dub)\/(?:gotaku-)?(\d+)\/?$/);
+    if (m) {
+      const [, id, audio, ep] = m;
+      return cachedWatch(
+        `watch:gotaku:${id}:${audio}:${ep}`,
+        () => gotakuHandler.fetch(request)
+      );
+    }
+
+    m = path.match(/^\/watch\/gotaku\/([a-zA-Z0-9_-]+)\/(\d+)\/?$/);
+    if (m) {
+      const [, id, ep] = m;
+      return cachedWatch(
+        `watch:gotaku:${id}:sub:${ep}`,
+        () => gotakuHandler.fetch(request)
+      );
+    }
+
+    m = path.match(/^\/embed\/gotaku\/([a-zA-Z0-9_-]+)\/(\d+)\/?$/);
+    if (m) {
+      return gotakuHandler.fetch(request);
+    }
+
+    m = path.match(/^\/episodes\/gotaku\/([a-zA-Z0-9_-]+)\/?$/);
+    if (m) {
+      return gotakuHandler.fetch(request);
     }
 
     return new Response(JSON.stringify({ error: "Not found" }), {

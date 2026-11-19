@@ -1,0 +1,443 @@
+{
+  "by_anilist": {
+    "21": {
+      "anilist_id": 21,
+      "mal_id": 21,
+      "title": "One Piece",
+      "episodes": {
+        "1": {
+          "cached_at": 1795004472113,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/EqmUA",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/fmkoo",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795004748186
+          }
+        },
+        "2": {
+          "cached_at": 1795004768587,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/jLTYJ",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/nDSKC",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795004771035
+          }
+        },
+        "1180": {
+          "cached_at": 1795006736733,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/fHtBY",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/pYlLr",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/kNiFc",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795006755254
+          }
+        }
+      }
+    },
+    "176314": {
+      "anilist_id": 176314,
+      "mal_id": 58518,
+      "title": "Sasaki and Peeps Season 2",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007844878,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/OruFX",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/HLwBg",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/DlRyp",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007844878
+          }
+        }
+      }
+    },
+    "179876": {
+      "anilist_id": 179876,
+      "mal_id": 59415,
+      "title": "Dark Machine: The Animation",
+      "episodes": {
+        "1": {
+          "cached_at": 1795006956501,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/LisDH",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/NxNbc",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795006956502
+          }
+        },
+        "6": {
+          "cached_at": 1795006735234,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/dRsAM",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/ReIpJ",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/iMQTY",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795006735234
+          }
+        }
+      }
+    },
+    "187316": {
+      "anilist_id": 187316,
+      "mal_id": 61140,
+      "title": "Suikoden: The Anime",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007848176,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/ifmwF",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/IcnAB",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007848176
+          }
+        }
+      }
+    },
+    "187990": {
+      "anilist_id": 187990,
+      "mal_id": 63818,
+      "title": "Battle Spirits [Re] Zekkai No Ku",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007849212,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/dfQgU",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/iMcKe",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/SzjFz",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007849212
+          }
+        }
+      }
+    },
+    "200294": {
+      "anilist_id": 200294,
+      "mal_id": 62696,
+      "title": "Super Psychic Policeman Chojo",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007847082,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/NwIRj",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/oPIFg",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/sXQTp",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007847082
+          }
+        }
+      }
+    },
+    "204011": {
+      "anilist_id": 204011,
+      "mal_id": 63098,
+      "title": "Psyren",
+      "episodes": {
+        "6": {
+          "cached_at": 1795007853505,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/gVTzd",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/Vktne",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/yghtA",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007853505
+          }
+        }
+      }
+    },
+    "206949": {
+      "anilist_id": 206949,
+      "mal_id": 63382,
+      "title": "Nia Liston: The Merciless Maiden",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007851388,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/CESMG",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/NiMLS",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007851388
+          }
+        }
+      }
+    },
+    "207191": {
+      "anilist_id": 207191,
+      "mal_id": 63409,
+      "title": "Hello, I Am a Witch and My Crush Wants Me to Make a Love Potion!",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007855488,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/zCyrD",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/nPpff",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/pIPUJ",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007855488
+          }
+        }
+      }
+    },
+    "207329": {
+      "anilist_id": 207329,
+      "mal_id": 63431,
+      "title": "The Laid-Off Cheat-Granting Mage Enjoys a Second Lease on Life",
+      "episodes": {
+        "7": {
+          "cached_at": 1795006738920,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/Msrvo",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/KFcBY",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/PFCPH",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795006738920
+          }
+        }
+      }
+    },
+    "207809": {
+      "anilist_id": 207809,
+      "mal_id": 63489,
+      "title": "Red River",
+      "episodes": {
+        "20": {
+          "cached_at": 1795006734148,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/Tiery",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/yapaZ",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/tOVLi",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795006734148
+          }
+        }
+      }
+    },
+    "209502": {
+      "anilist_id": 209502,
+      "mal_id": 63754,
+      "title": "The Cold Sato-san is Only Sweet to Me",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007850327,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/sXTxW",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "720p",
+                "url": "https://pahe.nekostream.site/lJJal",
+                "server": "Kiwi (Animepahe)"
+              },
+              {
+                "quality": "1080p",
+                "url": "https://pahe.nekostream.site/sVGhP",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007850327
+          }
+        }
+      }
+    },
+    "211778": {
+      "anilist_id": 211778,
+      "mal_id": 64084,
+      "title": "The World&#039;s Strongest Witch",
+      "episodes": {
+        "7": {
+          "cached_at": 1795007843396,
+          "sub": {
+            "downloads": [
+              {
+                "quality": "360p",
+                "url": "https://pahe.nekostream.site/EhZLV",
+                "server": "Kiwi (Animepahe)"
+              }
+            ],
+            "updated_at": 1795007843396
+          }
+        }
+      }
+    }
+  },
+  "by_mal": {
+    "21": 21,
+    "58518": 176314,
+    "59415": 179876,
+    "61140": 187316,
+    "62696": 200294,
+    "63098": 204011,
+    "63382": 206949,
+    "63409": 207191,
+    "63431": 207329,
+    "63489": 207809,
+    "63754": 209502,
+    "63818": 187990,
+    "64084": 211778
+  }
+}

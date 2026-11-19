@@ -281,7 +281,7 @@ async function resolveStream3(anilistId, audio, ep) {
       const serverItem = {
         serverName: "HD-2",
         dataType: audio,
-        dataLink: `https://flixcloud.cc/e/${adData.fileCode || ""}?v=2`
+        dataLink: `https://flixcloud.cc/e/${adData.fileCode || ""}?v=2${isDub ? "&a=1" : ""}`
       };
 
       // Non-blocking series lookup for title/slug
@@ -472,7 +472,21 @@ async function handleWatch3(anilistId, audio, epNum, origin) {
     seenStreamUrls.add(item.url);
     return true;
   });
-  const embeds = servers.map((s) => ({ name: s.serverName, type: s.dataType, url: s.dataLink }));
+  const isDub = audio === "dub";
+  const formatEmbed = (link) => {
+    if (!link || typeof link !== "string") return link;
+    try {
+      const u = new URL(link);
+      if (u.hostname.includes("flixcloud")) {
+        if (!u.searchParams.has("v")) u.searchParams.set("v", "2");
+        if (isDub) u.searchParams.set("a", "1");
+        else u.searchParams.delete("a");
+        return u.toString();
+      }
+    } catch {}
+    return link;
+  };
+  const embeds = servers.map((s) => ({ name: s.serverName, type: s.dataType, url: formatEmbed(s.dataLink) }));
   const topKey = stream?.key ?? stream?.playlist_key ?? null;
   const proxiedStreamUrl = cleanStreams[0]?.proxied_url || buildReanimeProxyUrl(stream?.url, topKey, `${FLIX}/`);
 
@@ -495,7 +509,7 @@ async function handleWatch3(anilistId, audio, epNum, origin) {
     outro_start: watchData?.outro_start ?? null,
     outro_end: watchData?.outro_end ?? null,
     embeds,
-    allServers: servers.map((s) => ({ name: s.serverName, type: s.dataType, embed: s.dataLink })),
+    allServers: servers.map((s) => ({ name: s.serverName, type: s.dataType, embed: formatEmbed(s.dataLink) })),
     failedServers: failedServers.map((s) => ({ name: s.server.serverName, type: s.server.dataType, error: s.error }))
   });
 }
@@ -541,7 +555,39 @@ async function handleStream3(anilistId, audio, epNum, request = null, env = {}) 
     },
   });
 
-  return proxyHandler.fetch(proxyRequest, env);
+  const proxyResponse = await proxyHandler.fetch(proxyRequest, env);
+  if (proxyResponse.ok) {
+    const contentType = proxyResponse.headers.get("content-type") || "";
+    if (contentType.includes("mpegurl") || contentType.includes("application/x-mpegURL") || target.includes(".m3u8")) {
+      const text = await proxyResponse.text();
+      if (text.includes("#EXT-X-MEDIA:TYPE=AUDIO")) {
+        const isDub = audio === "dub";
+        const lines = text.split(/\r?\n/);
+        const rewritten = lines.map(line => {
+          if (!line.startsWith("#EXT-X-MEDIA:TYPE=AUDIO")) return line;
+          const isEng = /LANGUAGE="?eng?"?/i.test(line) || /NAME="?[^"]*english/i.test(line);
+          const isJpn = /LANGUAGE="?(ja|jpn)"?/i.test(line) || /NAME="?[^"]*(native|japanese)/i.test(line);
+          if (isDub) {
+            if (isEng) line = line.replace(/DEFAULT=(NO|YES)/i, "DEFAULT=YES").replace(/AUTOSELECT=(NO|YES)/i, "AUTOSELECT=YES");
+            else if (isJpn) line = line.replace(/DEFAULT=(NO|YES)/i, "DEFAULT=NO");
+          } else {
+            if (isJpn) line = line.replace(/DEFAULT=(NO|YES)/i, "DEFAULT=YES").replace(/AUTOSELECT=(NO|YES)/i, "AUTOSELECT=YES");
+            else if (isEng) line = line.replace(/DEFAULT=(NO|YES)/i, "DEFAULT=NO");
+          }
+          return line;
+        }).join("\n");
+        return new Response(rewritten, {
+          status: proxyResponse.status,
+          headers: {
+            ...Object.fromEntries(proxyResponse.headers.entries()),
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "public, max-age=1800"
+          }
+        });
+      }
+    }
+  }
+  return proxyResponse;
 }
 __name(handleStream3, "handleStream");
 var reanime_default = {

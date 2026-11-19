@@ -1,13 +1,34 @@
+import fs from "node:fs";
+import path from "node:path";
 import { getMedia } from '../core/anilist.js';
 import { extractMegaPlayDetails } from "../extractors/megaplay.js";
 import { buildTitleSearchQueries, buildTitles, decodeEntities, titleIdentityScore } from "../core/new-provider-utils.js";
 import { get, set, isFresh, SHOW_IDENTITY_TTL } from "../core/smartcache.js";
+import { getDownloadsFromDb, saveDownloadsToDb } from "../core/anikoto-downloads-db.js";
 
-const ANIKOTO = "https://anikototv.to";
+const BASE = "https://anikototv.bz";
+const ANIKOTO = "https://anikototv.bz";
 const MAPPER = "https://mapper.nekostream.site/api/mal";
 const ANIZIP = "https://api.ani.zip/mappings";
 const SPOOF_REF = "https://hianimes.re/";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+
+const DB_PATH = path.resolve(process.cwd(), "data/anikoto_database.json");
+let ANIKOTO_DB = { by_anilist: {}, by_mal: {}, by_slug: {}, by_show_id: {} };
+let lastDbMtime = 0;
+
+function loadAnikotoDb() {
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      const stat = fs.statSync(DB_PATH);
+      if (stat.mtimeMs > lastDbMtime) {
+        ANIKOTO_DB = JSON.parse(fs.readFileSync(DB_PATH, "utf8"));
+        lastDbMtime = stat.mtimeMs;
+      }
+    }
+  } catch {}
+}
+loadAnikotoDb();
 
 const LANG_MAP = {
   en: "en", english: "en", ja: "ja", japanese: "ja",
@@ -137,8 +158,11 @@ function parseEpisodeRows(html) {
 }
 
 async function inspectAnikotoCandidate(candidate) {
-  const watchHtml = await httpGet(`${ANIKOTO}/watch/${candidate.slug}`, { Referer: `${ANIKOTO}/` });
-  const showId = watchHtml.match(/data-id="(\d+)"/)?.[1];
+  let showId = candidate.showId;
+  if (!showId) {
+    const watchHtml = await httpGet(`${ANIKOTO}/watch/${candidate.slug}`, { Referer: `${ANIKOTO}/` });
+    showId = watchHtml.match(/data-id="(\d+)"/)?.[1];
+  }
   if (!showId) return null;
   const listJson = await getJSON(`${ANIKOTO}/ajax/episode/list/${showId}`, {
     "X-Requested-With": "XMLHttpRequest",
@@ -153,6 +177,30 @@ async function findAnikotoShow(media, anizip) {
   const cached = get(cacheKey);
   if (isFresh(cached)) {
     return cached.data;
+  }
+
+  loadAnikotoDb();
+
+  // Instant DB lookup by AniList ID or MAL ID
+  const dbMatch = ANIKOTO_DB.by_anilist?.[String(media.id)] ||
+                  (media.idMal ? ANIKOTO_DB.by_mal?.[String(media.idMal)] : null);
+
+  if (dbMatch && dbMatch.slug) {
+    const directCandidate = {
+      slug: dbMatch.slug,
+      name: dbMatch.title,
+      jp: dbMatch.jp_title || "",
+      showId: dbMatch.show_id,
+    };
+    const inspected = await inspectAnikotoCandidate(directCandidate);
+    if (inspected && inspected.episodes?.length) {
+      const showData = {
+        ...inspected,
+        title: media.title?.english || media.title?.romaji || inspected.name,
+      };
+      set(cacheKey, showData, SHOW_IDENTITY_TTL);
+      return showData;
+    }
   }
 
   const mappings = anizip ?? await getJSON(`${ANIZIP}?anilist_id=${media.id}`).catch(() => null);
@@ -313,6 +361,77 @@ async function extractEmbedSource(embedUrl) {
   }
 }
 
+export async function handleDownload(anilistId, audio = "sub", epNum = 1, ctx = {}) {
+  // 1. Ultra-fast check in dedicated downloads database (< 1ms)
+  const cached = getDownloadsFromDb(anilistId, epNum, audio);
+  if (cached && cached.downloads?.length) {
+    return jsonResponse(cached);
+  }
+
+  loadAnikotoDb();
+  const idStr = String(anilistId);
+  const dbAnime = ANIKOTO_DB.by_anilist?.[idStr] || ANIKOTO_DB.by_slug?.[idStr] || null;
+  const media = ctx.media || await getMedia(anilistId).catch(() => null);
+  const malId = media?.idMal || dbAnime?.mal_id || null;
+
+  let show = null;
+  if (dbAnime?.show_id) {
+    show = await inspectAnikotoCandidate({ slug: dbAnime.slug, showId: dbAnime.show_id, name: dbAnime.title });
+  }
+  if (!show && media) {
+    show = await findAnikotoShow(media, ctx.anizip).catch(() => null);
+  }
+  if (!show) {
+    return jsonResponse({ error: `Anime not found for AniList ID: ${anilistId}` }, 404);
+  }
+
+  const targetEp = show.episodes?.find((e) => e.number === Number(epNum));
+  if (!targetEp) {
+    return jsonResponse({ error: `Episode ${epNum} not found for show: ${show.title}` }, 404);
+  }
+
+  const targetMal = targetEp.malId || malId;
+  const targetSlug = targetEp.slug;
+  const targetTs = targetEp.timestamp;
+
+  const downloads = [];
+  if (targetMal && targetSlug && targetTs) {
+    const mapperRes = await getJSON(`${MAPPER}/${targetMal}/${targetSlug}/${targetTs}`, { Referer: `${ANIKOTO}/` }).catch(() => null);
+    if (mapperRes) {
+      for (const [source, data] of Object.entries(mapperRes)) {
+        if (source === "status") continue;
+        const audioDl = data?.[audio]?.download;
+        if (audioDl && typeof audioDl === "object") {
+          for (const [quality, url] of Object.entries(audioDl)) {
+            if (url && typeof url === "string") {
+              downloads.push({
+                quality,
+                url,
+                server: `${source} (Animepahe)`
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (downloads.length) {
+    saveDownloadsToDb(anilistId, targetMal, show.title, epNum, audio, downloads);
+  }
+
+  return jsonResponse({
+    provider: "anikoto",
+    anilistId: parseInt(anilistId, 10),
+    malId: targetMal ? parseInt(targetMal, 10) : null,
+    title: show.title,
+    episode: Number(epNum),
+    audio,
+    downloads,
+    source: "live_fetch"
+  });
+}
+
 export async function getEpisodes(anilistId, ctx = {}) {
   const media = ctx.media || await getMedia(anilistId);
   if (!media) throw new Error(`Could not resolve media for AniList ID: ${anilistId}`);
@@ -374,11 +493,47 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     return jsonResponse({ error: "audio must be sub or dub" }, 400);
   }
 
+  loadAnikotoDb();
+
+  const idStr = String(anilistId);
+  const dbAnime = ANIKOTO_DB.by_anilist?.[idStr] ||
+                  (ANIKOTO_DB.by_slug?.[idStr]) ||
+                  null;
+
+  const cachedEpKey = `${audio}_${epNum}`;
+  const cachedEp = dbAnime?.episodes_cache?.[cachedEpKey];
+
+  // ⚡ 1. ULTRA-FAST DATABASE CACHE HIT (0.5ms - Sub-1ms from RAM)
+  if (cachedEp && (cachedEp.embed_url || cachedEp.stream_url)) {
+    const dlFromDb = getDownloadsFromDb(anilistId, epNum, audio);
+    return jsonResponse({
+      anilistId: parseInt(anilistId),
+      malId: dbAnime?.mal_id || null,
+      episode: Number(epNum),
+      audio,
+      embed_url: cachedEp.embed_url,
+      stream_url: cachedEp.stream_url,
+      proxied_stream_url: cachedEp.proxied_stream_url || cachedEp.stream_url,
+      servers: cachedEp.servers || [],
+      streams: cachedEp.streams || [],
+      subtitles: cachedEp.subtitles || [],
+      downloads: dlFromDb?.downloads || cachedEp.downloads || [],
+      headers: cachedEp.headers || {
+        "User-Agent": UA,
+        "Referer": "https://megaplay.buzz/"
+      },
+      source: "anikoto-database-cache"
+    });
+  }
+
   const media = ctx.media || await getMedia(anilistId);
   if (!media) {
     return jsonResponse({ error: `Could not resolve media for AniList ID: ${anilistId}` }, 400);
   }
 
+  const malIdNum = media.idMal || dbAnime?.mal_id || null;
+
+  // FALLBACK: Classic Anikoto search and scraping pipeline
   const show = await findAnikotoShow(media, ctx.anizip);
   const targetEp = show.episodes.find((episode) => episode.number === Number(epNum) && episode[audio === "sub" ? "hasSub" : "hasDub"]);
 
@@ -386,7 +541,7 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     return jsonResponse({ error: `Episode ${epNum} not found for show: ${show.title}` }, 404);
   }
 
-  const malIdNum = targetEp.malId || media.idMal || null;
+  const fallbackMalId = targetEp.malId || malIdNum;
 
   const [serverDataRes, mapperRes] = await Promise.allSettled([
     getJSON(`${ANIKOTO}/ajax/server/list?servers=${encodeURIComponent(targetEp.ids)}`, {
@@ -598,6 +753,21 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     }
   }
 
+  const allServers = [];
+  for (const res of resolvedServers) {
+    if (res.status === "fulfilled" && res.value?.embedUrl) {
+      allServers.push({
+        name: res.value.item.name,
+        type: res.value.item.serverType || audio,
+        url: res.value.embedUrl,
+        skip_data: (res.value.serverIntro?.end || res.value.serverOutro?.start) ? {
+          intro: [res.value.serverIntro.start, res.value.serverIntro.end],
+          outro: [res.value.serverOutro.start, res.value.serverOutro.end]
+        } : null
+      });
+    }
+  }
+
   const downloads = [];
   const dlSeen = new Set();
   for (const res of resolvedDownloads) {
@@ -607,6 +777,31 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     }
   }
 
+  const structuredDownloads = [];
+  if (mapperData) {
+    for (const [sKey, sObj] of Object.entries(mapperData)) {
+      if (sKey === "status") continue;
+      const cleanName = sKey.replace(/[-_]+$/, "").trim();
+      const audioDl = sObj?.[audio]?.download;
+      if (audioDl && typeof audioDl === "object") {
+        for (const [quality, dUrl] of Object.entries(audioDl)) {
+          if (dUrl && typeof dUrl === "string") {
+            structuredDownloads.push({
+              quality,
+              url: dUrl,
+              server: `${cleanName} (Animepahe)`
+            });
+          }
+        }
+      }
+    }
+  }
+
+  const finalDownloads = structuredDownloads.length ? structuredDownloads : downloads;
+  if (finalDownloads.length) {
+    saveDownloadsToDb(anilistId, fallbackMalId, show.title, epNum, audio, finalDownloads);
+  }
+
   streams.sort((left, right) => streamRank(left) - streamRank(right));
   streams.forEach((stream, index) => {
     stream.priority = index === 0 ? 5 : 4;
@@ -614,21 +809,89 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
   });
 
   const topStream = streams.find((s) => s.type === "hls") || streams[0];
+  const topEmbed = streams.find((s) => s.type === "embed")?.url || topStream?.embedUrl || null;
 
-  return jsonResponse({
+  const resultData = {
     anilistId: parseInt(anilistId),
-    malId: malIdNum,
+    malId: fallbackMalId,
     episode: epNum,
     audio,
+    embed_url: topEmbed,
     stream_url: topStream?.url || null,
     proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
+    servers: allServers,
     streams,
     subtitles,
-    downloads,
+    downloads: finalDownloads,
     headers: {
       "User-Agent": UA,
       "Referer": streams[0]?.referer || "https://anikototv.to/"
     }
+  };
+
+  // ⚡ Write-Through cache to database asynchronously
+  try {
+    if (dbAnime) {
+      if (!dbAnime.episodes_cache) dbAnime.episodes_cache = {};
+      dbAnime.episodes_cache[cachedEpKey] = {
+        embed_url: topEmbed,
+        stream_url: resultData.stream_url,
+        proxied_stream_url: resultData.proxied_stream_url,
+        servers: allServers,
+        streams: resultData.streams,
+        subtitles: resultData.subtitles,
+        headers: resultData.headers,
+        cached_at: Date.now()
+      };
+      fs.promises.writeFile(DB_PATH, JSON.stringify(ANIKOTO_DB), "utf8").catch(() => {});
+    }
+  } catch {}
+
+  return jsonResponse(resultData);
+}
+
+export async function handleEmbedHtml(anilistId, audio = "sub", epNum = 1) {
+  const watchResp = await handleWatch(anilistId, audio, epNum);
+  const data = await watchResp.json();
+  const embed = data.embed_url || data.stream_url;
+  if (!embed) {
+    return new Response(`<h3>Embed stream not found</h3>`, {
+      status: 404,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anikoto Player - Episode ${epNum}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    iframe { width: 100%; height: 100%; border: none; }
+  </style>
+</head>
+<body>
+  <iframe
+    src="${embed}"
+    allowfullscreen="true"
+    webkitallowfullscreen="true"
+    mozallowfullscreen="true"
+    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+    referrerpolicy="origin"
+  ></iframe>
+</body>
+</html>`;
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "public, max-age=600",
+    },
   });
 }
 
@@ -671,6 +934,18 @@ export default {
     try {
       let m = path.match(/^\/watch\/anikoto\/(\d+)\/(sub|dub)\/anikoto-(\d+)\/?$/);
       if (m) return await handleWatch(m[1], m[2], parseInt(m[3]));
+
+      m = path.match(/^\/download\/anikoto\/(\d+)\/(sub|dub)\/(\d+)\/?$/);
+      if (m) return await handleDownload(m[1], m[2], parseInt(m[3], 10));
+
+      m = path.match(/^\/download\/anikoto\/(\d+)\/(\d+)\/?$/);
+      if (m) return await handleDownload(m[1], "sub", parseInt(m[2], 10));
+
+      m = path.match(/^\/embed\/anikoto\/(\d+)\/(sub|dub)\/(?:anikoto-)?(\d+)\/?$/);
+      if (m) return await handleEmbedHtml(m[1], m[2], parseInt(m[3]));
+
+      m = path.match(/^\/embed\/anikoto\/(\d+)\/(\d+)\/?$/);
+      if (m) return await handleEmbedHtml(m[1], "sub", parseInt(m[2]));
 
       m = path.match(/^\/stream\/anikoto\/(\d+)\/(sub|dub)\/(\d+)\/?$/);
       if (m) return await handleStream(m[1], m[2], parseInt(m[3]));

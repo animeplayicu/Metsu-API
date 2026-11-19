@@ -1,0 +1,2529 @@
+{
+  "updated_at": "2026-11-18T05:04:54.713Z",
+  "total_anime": 10,
+  "by_anilist": {
+    "20": {
+      "slug": "naruto",
+      "anilist_id": 20,
+      "mal_id": 20,
+      "total_episodes": 214,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Naruto Episode 1",
+          "embed_id": "25881",
+          "embed_url": "https://www.animegg.org/embed/25881",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/248322/video.mp4?for=101794923601002",
+              "backup": "https://www.mp4upload.com/embed-oowvlwkkencd.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/248322/video.mp4?for=101794923601002"
+        },
+        "2": {
+          "title": "Naruto Episode 2",
+          "embed_id": "25883",
+          "embed_url": "https://www.animegg.org/embed/25883",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/248340/video.mp4?for=101794923605453",
+              "backup": "https://www.mp4upload.com/embed-kkm9ndblaikd.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/248340/video.mp4?for=101794923605453"
+        },
+        "3": {
+          "title": "Naruto Episode 3",
+          "embed_id": "25877",
+          "embed_url": "https://www.animegg.org/embed/25877",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52378/video.mp4?for=101794923607278",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213141/video.mp4?for=101794923607278",
+              "backup": "https://mp4upload.com/embed-87jffxz5l0rs.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52378/video.mp4?for=101794923607278"
+        },
+        "4": {
+          "title": "Naruto Episode 4",
+          "embed_id": "25875",
+          "embed_url": "https://www.animegg.org/embed/25875",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52374/video.mp4?for=101794923612535",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213165/video.mp4?for=101794923612561",
+              "backup": "https://mp4upload.com/embed-hpvgja2oeouh.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52374/video.mp4?for=101794923612535"
+        },
+        "5": {
+          "title": "Naruto Episode 5",
+          "embed_id": "25873",
+          "embed_url": "https://www.animegg.org/embed/25873",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52370/video.mp4?for=101794923618526",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213185/video.mp4?for=101794923618559",
+              "backup": "https://mp4upload.com/embed-rofkihri1x2l.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52370/video.mp4?for=101794923618526"
+        }
+      }
+    },
+    "21": {
+      "slug": "one-piece",
+      "anilist_id": 21,
+      "mal_id": 21,
+      "total_episodes": 1164,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "One Piece Episode 1",
+          "embed_id": "27657",
+          "embed_url": "https://www.animegg.org/embed/27657",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55976/video.mp4?for=101794923621720",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/240624/video.mp4?for=101794923621726",
+              "backup": "https://mp4upload.com/embed-0bu9blvhk1a8.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/240656/video.mp4?for=101794923621743",
+              "backup": "https://mp4upload.com/embed-peda0hgmnkjd.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/240636/video.mp4?for=101794923621750",
+              "backup": "https://mp4upload.com/embed-3pp6895rrjsr.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55976/video.mp4?for=101794923621720"
+        },
+        "2": {
+          "title": "One Piece Episode 2",
+          "embed_id": "27647",
+          "embed_url": "https://www.animegg.org/embed/27647",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55956/video.mp4?for=101794923357080",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241120/video.mp4?for=101794923357080",
+              "backup": "https://mp4upload.com/embed-wwfu2baijbw5.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/241186/video.mp4?for=101794923357081",
+              "backup": "https://mp4upload.com/embed-5o1gy3w2pgqd.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241146/video.mp4?for=101794923357081",
+              "backup": "https://mp4upload.com/embed-7l251136ll9r.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55956/video.mp4?for=101794923357080"
+        },
+        "3": {
+          "title": "One Piece Episode 3",
+          "embed_id": "27639",
+          "embed_url": "https://www.animegg.org/embed/27639",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55940/video.mp4?for=101794923625266",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241416/video.mp4?for=101794923625271",
+              "backup": "https://mp4upload.com/embed-n2sk6dktla53.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/243548/video.mp4?for=101794923625273",
+              "backup": "https://mp4upload.com/embed-jwx7r25afjbe.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241434/video.mp4?for=101794923625277",
+              "backup": "https://mp4upload.com/embed-dyrzh5zby1to.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55940/video.mp4?for=101794923625266"
+        },
+        "4": {
+          "title": "One Piece Episode 4",
+          "embed_id": "27643",
+          "embed_url": "https://www.animegg.org/embed/27643",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55948/video.mp4?for=101794923628649",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241744/video.mp4?for=101794923628667",
+              "backup": "https://mp4upload.com/embed-pr4gt8vqw6yv.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/244192/video.mp4?for=101794923628676",
+              "backup": "https://mp4upload.com/embed-opllisugk3uh.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241768/video.mp4?for=101794923628691",
+              "backup": "https://mp4upload.com/embed-36z66lj2b4sq.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55948/video.mp4?for=101794923628649"
+        },
+        "5": {
+          "title": "One Piece Episode 5",
+          "embed_id": "27641",
+          "embed_url": "https://www.animegg.org/embed/27641",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55944/video.mp4?for=101794923630116",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/242948/video.mp4?for=101794923630122",
+              "backup": "https://mp4upload.com/embed-vq2wsgd50y0r.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/244214/video.mp4?for=101794923630131",
+              "backup": "https://mp4upload.com/embed-guy4b1jfstez.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/242108/video.mp4?for=101794923630136",
+              "backup": "https://mp4upload.com/embed-fihjbban9k5v.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55944/video.mp4?for=101794923630116"
+        },
+        "1160": {
+          "title": "One Piece Episode 1160",
+          "embed_id": "145627",
+          "embed_url": "https://www.animegg.org/embed/145627",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/542380/video.mp4?for=101794978293475",
+              "backup": "http://spiderdrone.cdn.oose.io:8585/f572689ee7b33e8cf5186cbcbc4dc4f5"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/542383/video.mp4?for=101794978293892",
+              "backup": "http://spiderdrone.cdn.oose.io:8585/17810c9007ab92218e63af8d69c8fb51"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/542384/video.mp4?for=101794978294077",
+              "backup": "http://spiderdrone.cdn.oose.io:8585/d75eb0b8a2520c654dcc06535c1bf419"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/542380/video.mp4?for=101794978293475"
+        }
+      }
+    },
+    "269": {
+      "slug": "bleach",
+      "anilist_id": 269,
+      "mal_id": 269,
+      "total_episodes": 366,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Bleach Episode 1",
+          "embed_id": "3398",
+          "embed_url": "https://www.animegg.org/embed/3398",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6922/video.mp4?for=101794923640911",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6922/video.mp4?for=101794923640911"
+        },
+        "2": {
+          "title": "Bleach Episode 2",
+          "embed_id": "3394",
+          "embed_url": "https://www.animegg.org/embed/3394",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6914/video.mp4?for=101794923643676",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6914/video.mp4?for=101794923643676"
+        },
+        "3": {
+          "title": "Bleach Episode 3",
+          "embed_id": "3392",
+          "embed_url": "https://www.animegg.org/embed/3392",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/151265/video.mp4?for=101794923645008",
+              "backup": "http://mp4upload.com/embed-ba7suq0dooxy-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/151265/video.mp4?for=101794923645008"
+        },
+        "4": {
+          "title": "Bleach Episode 4",
+          "embed_id": "3390",
+          "embed_url": "https://www.animegg.org/embed/3390",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6906/video.mp4?for=101794923647485",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6906/video.mp4?for=101794923647485"
+        },
+        "5": {
+          "title": "Bleach Episode 5",
+          "embed_id": "3388",
+          "embed_url": "https://www.animegg.org/embed/3388",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6902/video.mp4?for=101794923649885",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6902/video.mp4?for=101794923649885"
+        }
+      }
+    },
+    "1535": {
+      "slug": "death-note",
+      "anilist_id": 1535,
+      "mal_id": 1535,
+      "total_episodes": 37,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Death Note Episode 1",
+          "embed_id": "7455",
+          "embed_url": "https://www.animegg.org/embed/7455",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15143/video.mp4?for=101794923653714",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15143/video.mp4?for=101794923653714"
+        },
+        "2": {
+          "title": "Death Note Episode 2",
+          "embed_id": "7457",
+          "embed_url": "https://www.animegg.org/embed/7457",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15147/video.mp4?for=101794923655265",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/223180/video.mp4?for=101794923655265",
+              "backup": "https://mp4upload.com/embed-xvku3mwjgw7h.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/223182/video.mp4?for=101794923655265",
+              "backup": "https://mp4upload.com/embed-79fh432ihesh.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/223188/video.mp4?for=101794923655266",
+              "backup": "https://mp4upload.com/embed-xpzg3logtk9g.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15147/video.mp4?for=101794923655265"
+        },
+        "3": {
+          "title": "Death Note Episode 3",
+          "embed_id": "7451",
+          "embed_url": "https://www.animegg.org/embed/7451",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15135/video.mp4?for=101794923656668",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15135/video.mp4?for=101794923656668"
+        },
+        "4": {
+          "title": "Death Note Episode 4",
+          "embed_id": "7453",
+          "embed_url": "https://www.animegg.org/embed/7453",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15139/video.mp4?for=101794923658539",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15139/video.mp4?for=101794923658539"
+        },
+        "5": {
+          "title": "Death Note Episode 5",
+          "embed_id": "7449",
+          "embed_url": "https://www.animegg.org/embed/7449",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15131/video.mp4?for=101794923661504",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15131/video.mp4?for=101794923661504"
+        }
+      }
+    },
+    "1735": {
+      "slug": "naruto-shippuden",
+      "anilist_id": 1735,
+      "mal_id": 1735,
+      "total_episodes": 494,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Naruto Shippuden Episode 1",
+          "embed_id": "26743",
+          "embed_url": "https://www.animegg.org/embed/26743",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/54112/video.mp4?for=101794923666392",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213281/video.mp4?for=101794923666396",
+              "backup": "https://mp4upload.com/embed-r4650spcyagi.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/54112/video.mp4?for=101794923666392"
+        },
+        "2": {
+          "title": "Naruto Shippuden Episode 2",
+          "embed_id": "26745",
+          "embed_url": "https://www.animegg.org/embed/26745",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/54116/video.mp4?for=101794923671672",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213679/video.mp4?for=101794923671674",
+              "backup": "https://mp4upload.com/embed-v69h15oyrh32.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/54116/video.mp4?for=101794923671672"
+        },
+        "3": {
+          "title": "Naruto Shippuden Episode 3",
+          "embed_id": "26284",
+          "embed_url": "https://www.animegg.org/embed/26284",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53194/video.mp4?for=101794923673736",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214075/video.mp4?for=101794923673761",
+              "backup": "https://mp4upload.com/embed-wz9kz2dmexng.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53194/video.mp4?for=101794923673736"
+        },
+        "4": {
+          "title": "Naruto Shippuden Episode 4",
+          "embed_id": "26278",
+          "embed_url": "https://www.animegg.org/embed/26278",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53182/video.mp4?for=101794923675202",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214445/video.mp4?for=101794923675205",
+              "backup": "https://mp4upload.com/embed-0q7qfv9n1psx.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53182/video.mp4?for=101794923675202"
+        },
+        "5": {
+          "title": "Naruto Shippuden Episode 5",
+          "embed_id": "26276",
+          "embed_url": "https://www.animegg.org/embed/26276",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53178/video.mp4?for=101794923677032",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214633/video.mp4?for=101794923677042",
+              "backup": "https://mp4upload.com/embed-s63mlpun96f7.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53178/video.mp4?for=101794923677032"
+        }
+      }
+    },
+    "5114": {
+      "slug": "fullmetal-alchemist-brotherhood",
+      "anilist_id": 5114,
+      "mal_id": 5114,
+      "total_episodes": 0,
+      "scraped_episodes": 0,
+      "episodes": {}
+    },
+    "9253": {
+      "slug": "steinsgate",
+      "anilist_id": 9253,
+      "mal_id": 9253,
+      "total_episodes": 0,
+      "scraped_episodes": 0,
+      "episodes": {}
+    },
+    "11061": {
+      "slug": "hunter-x-hunter-2011",
+      "anilist_id": 11061,
+      "mal_id": 11061,
+      "total_episodes": 148,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Hunter x Hunter (2011) Episode 1",
+          "embed_id": "16997",
+          "embed_url": "https://www.animegg.org/embed/16997",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34181/video.mp4?for=101794923685904",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34181/video.mp4?for=101794923685904"
+        },
+        "2": {
+          "title": "Hunter x Hunter (2011) Episode 2",
+          "embed_id": "16996",
+          "embed_url": "https://www.animegg.org/embed/16996",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34179/video.mp4?for=101794923687680",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211434/video.mp4?for=101794923687703",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_194411938032757_4819402735784820736_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=525&oh=6ab1a340cb001b0b3e9f607088dc013d&oe=5B66BEEB"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34179/video.mp4?for=101794923687680"
+        },
+        "3": {
+          "title": "Hunter x Hunter (2011) Episode 3",
+          "embed_id": "16995",
+          "embed_url": "https://www.animegg.org/embed/16995",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34177/video.mp4?for=101794923689531",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/227697/video.mp4?for=101794923689531",
+              "backup": "https://mp4upload.com/embed-4m1zh5zu7gdr.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/227711/video.mp4?for=101794923689539",
+              "backup": "https://mp4upload.com/embed-c6ibjvg5ksaq.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34177/video.mp4?for=101794923689531"
+        },
+        "4": {
+          "title": "Hunter x Hunter (2011) Episode 4",
+          "embed_id": "16993",
+          "embed_url": "https://www.animegg.org/embed/16993",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34173/video.mp4?for=101794923690596",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211438/video.mp4?for=101794923690597",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_987654241398944_5840781460973289472_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=901&oh=faa16589b1f6de3759c69d8d6d040af9&oe=5B663F67"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34173/video.mp4?for=101794923690596"
+        },
+        "5": {
+          "title": "Hunter x Hunter (2011) Episode 5",
+          "embed_id": "16994",
+          "embed_url": "https://www.animegg.org/embed/16994",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34175/video.mp4?for=101794923691728",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211442/video.mp4?for=101794923691728",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_449313078860348_7229465570272346112_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=676&oh=221f8febe3c1c9a1f82c815278840ad4&oe=5B67883A"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34175/video.mp4?for=101794923691728"
+        }
+      }
+    },
+    "11757": {
+      "slug": "sword-art-online",
+      "anilist_id": 11757,
+      "mal_id": 11757,
+      "total_episodes": 25,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Sword Art Online Episode 1",
+          "embed_id": "36931",
+          "embed_url": "https://www.animegg.org/embed/36931",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71686/video.mp4?for=101794923695328",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71686/video.mp4?for=101794923695328"
+        },
+        "2": {
+          "title": "Sword Art Online Episode 2",
+          "embed_id": "36921",
+          "embed_url": "https://www.animegg.org/embed/36921",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71666/video.mp4?for=101794923699170",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71666/video.mp4?for=101794923699170"
+        },
+        "3": {
+          "title": "Sword Art Online Episode 3",
+          "embed_id": "36917",
+          "embed_url": "https://www.animegg.org/embed/36917",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71658/video.mp4?for=101794923700248",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71658/video.mp4?for=101794923700248"
+        },
+        "4": {
+          "title": "Sword Art Online Episode 4",
+          "embed_id": "36919",
+          "embed_url": "https://www.animegg.org/embed/36919",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71662/video.mp4?for=101794923701244",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71662/video.mp4?for=101794923701244"
+        },
+        "5": {
+          "title": "Sword Art Online Episode 16.5",
+          "embed_id": "75960",
+          "embed_url": "https://www.animegg.org/embed/75960",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/144570/video.mp4?for=101794923702242",
+              "backup": "http://mp4upload.com/embed-8u2jw636f5o1-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/144570/video.mp4?for=101794923702242"
+        }
+      }
+    },
+    "16498": {
+      "slug": "attack-on-titan",
+      "anilist_id": 16498,
+      "mal_id": 16498,
+      "total_episodes": 26,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Attack on Titan Episode 1",
+          "embed_id": "34604",
+          "embed_url": "https://www.animegg.org/embed/34604",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67942/video.mp4?for=101794923704357",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67942/video.mp4?for=101794923704357"
+        },
+        "2": {
+          "title": "Attack on Titan Episode 2",
+          "embed_id": "34600",
+          "embed_url": "https://www.animegg.org/embed/34600",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67934/video.mp4?for=101794923705624",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67934/video.mp4?for=101794923705624"
+        },
+        "3": {
+          "title": "Attack on Titan Episode 3",
+          "embed_id": "34602",
+          "embed_url": "https://www.animegg.org/embed/34602",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/145855/video.mp4?for=101794923707557",
+              "backup": "http://mp4upload.com/embed-hlzugw8lbju2-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/145855/video.mp4?for=101794923707557"
+        },
+        "4": {
+          "title": "Attack on Titan Episode 4",
+          "embed_id": "34606",
+          "embed_url": "https://www.animegg.org/embed/34606",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67946/video.mp4?for=101794923712331",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67946/video.mp4?for=101794923712331"
+        },
+        "5": {
+          "title": "Attack on Titan Episode 5",
+          "embed_id": "34608",
+          "embed_url": "https://www.animegg.org/embed/34608",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67950/video.mp4?for=101794923719434",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/238620/video.mp4?for=101794923719439",
+              "backup": "https://mp4upload.com/embed-s90hzorjg451-650x370.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/221572/video.mp4?for=101794923719480",
+              "backup": "https://mp4upload.com/embed-1bzll0dthb9h.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67950/video.mp4?for=101794923719434"
+        }
+      }
+    },
+    "113415": {
+      "slug": "jujutsu-kaisen-tv",
+      "anilist_id": 113415,
+      "mal_id": 40748,
+      "title": "Jujutsu Kaisen",
+      "episodes": {
+        "1": {
+          "title": "Jujutsu Kaisen (TV) Episode 1",
+          "embed_id": null,
+          "embed_url": "https://www.animegg.org/embed/99379",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/272785/video.mp4?for=101794929262729",
+              "backup": "https://mp4upload.com/embed-jd53od3s9eup-650x370.html"
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/272827/video.mp4?for=101794929263152",
+              "backup": "https://mp4upload.com/embed-wswvuuqzuj6e-650x370.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/272829/video.mp4?for=101794929263152",
+              "backup": "https://mp4upload.com/embed-ybl4ic8g7keh-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/272785/video.mp4?for=101794929262729"
+        }
+      }
+    }
+  },
+  "by_mal": {
+    "20": {
+      "slug": "naruto",
+      "anilist_id": 20,
+      "mal_id": 20,
+      "total_episodes": 214,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Naruto Episode 1",
+          "embed_id": "25881",
+          "embed_url": "https://www.animegg.org/embed/25881",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/248322/video.mp4?for=101794923601002",
+              "backup": "https://www.mp4upload.com/embed-oowvlwkkencd.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/248322/video.mp4?for=101794923601002"
+        },
+        "2": {
+          "title": "Naruto Episode 2",
+          "embed_id": "25883",
+          "embed_url": "https://www.animegg.org/embed/25883",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/248340/video.mp4?for=101794923605453",
+              "backup": "https://www.mp4upload.com/embed-kkm9ndblaikd.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/248340/video.mp4?for=101794923605453"
+        },
+        "3": {
+          "title": "Naruto Episode 3",
+          "embed_id": "25877",
+          "embed_url": "https://www.animegg.org/embed/25877",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52378/video.mp4?for=101794923607278",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213141/video.mp4?for=101794923607278",
+              "backup": "https://mp4upload.com/embed-87jffxz5l0rs.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52378/video.mp4?for=101794923607278"
+        },
+        "4": {
+          "title": "Naruto Episode 4",
+          "embed_id": "25875",
+          "embed_url": "https://www.animegg.org/embed/25875",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52374/video.mp4?for=101794923612535",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213165/video.mp4?for=101794923612561",
+              "backup": "https://mp4upload.com/embed-hpvgja2oeouh.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52374/video.mp4?for=101794923612535"
+        },
+        "5": {
+          "title": "Naruto Episode 5",
+          "embed_id": "25873",
+          "embed_url": "https://www.animegg.org/embed/25873",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52370/video.mp4?for=101794923618526",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213185/video.mp4?for=101794923618559",
+              "backup": "https://mp4upload.com/embed-rofkihri1x2l.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52370/video.mp4?for=101794923618526"
+        }
+      }
+    },
+    "21": {
+      "slug": "one-piece",
+      "anilist_id": 21,
+      "mal_id": 21,
+      "total_episodes": 1164,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "One Piece Episode 1",
+          "embed_id": "27657",
+          "embed_url": "https://www.animegg.org/embed/27657",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55976/video.mp4?for=101794923621720",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/240624/video.mp4?for=101794923621726",
+              "backup": "https://mp4upload.com/embed-0bu9blvhk1a8.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/240656/video.mp4?for=101794923621743",
+              "backup": "https://mp4upload.com/embed-peda0hgmnkjd.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/240636/video.mp4?for=101794923621750",
+              "backup": "https://mp4upload.com/embed-3pp6895rrjsr.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55976/video.mp4?for=101794923621720"
+        },
+        "2": {
+          "title": "One Piece Episode 2",
+          "embed_id": "27647",
+          "embed_url": "https://www.animegg.org/embed/27647",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55956/video.mp4?for=101794923357080",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241120/video.mp4?for=101794923357080",
+              "backup": "https://mp4upload.com/embed-wwfu2baijbw5.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/241186/video.mp4?for=101794923357081",
+              "backup": "https://mp4upload.com/embed-5o1gy3w2pgqd.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241146/video.mp4?for=101794923357081",
+              "backup": "https://mp4upload.com/embed-7l251136ll9r.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55956/video.mp4?for=101794923357080"
+        },
+        "3": {
+          "title": "One Piece Episode 3",
+          "embed_id": "27639",
+          "embed_url": "https://www.animegg.org/embed/27639",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55940/video.mp4?for=101794923625266",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241416/video.mp4?for=101794923625271",
+              "backup": "https://mp4upload.com/embed-n2sk6dktla53.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/243548/video.mp4?for=101794923625273",
+              "backup": "https://mp4upload.com/embed-jwx7r25afjbe.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241434/video.mp4?for=101794923625277",
+              "backup": "https://mp4upload.com/embed-dyrzh5zby1to.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55940/video.mp4?for=101794923625266"
+        },
+        "4": {
+          "title": "One Piece Episode 4",
+          "embed_id": "27643",
+          "embed_url": "https://www.animegg.org/embed/27643",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55948/video.mp4?for=101794923628649",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241744/video.mp4?for=101794923628667",
+              "backup": "https://mp4upload.com/embed-pr4gt8vqw6yv.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/244192/video.mp4?for=101794923628676",
+              "backup": "https://mp4upload.com/embed-opllisugk3uh.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241768/video.mp4?for=101794923628691",
+              "backup": "https://mp4upload.com/embed-36z66lj2b4sq.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55948/video.mp4?for=101794923628649"
+        },
+        "5": {
+          "title": "One Piece Episode 5",
+          "embed_id": "27641",
+          "embed_url": "https://www.animegg.org/embed/27641",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55944/video.mp4?for=101794923630116",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/242948/video.mp4?for=101794923630122",
+              "backup": "https://mp4upload.com/embed-vq2wsgd50y0r.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/244214/video.mp4?for=101794923630131",
+              "backup": "https://mp4upload.com/embed-guy4b1jfstez.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/242108/video.mp4?for=101794923630136",
+              "backup": "https://mp4upload.com/embed-fihjbban9k5v.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55944/video.mp4?for=101794923630116"
+        }
+      }
+    },
+    "269": {
+      "slug": "bleach",
+      "anilist_id": 269,
+      "mal_id": 269,
+      "total_episodes": 366,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Bleach Episode 1",
+          "embed_id": "3398",
+          "embed_url": "https://www.animegg.org/embed/3398",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6922/video.mp4?for=101794923640911",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6922/video.mp4?for=101794923640911"
+        },
+        "2": {
+          "title": "Bleach Episode 2",
+          "embed_id": "3394",
+          "embed_url": "https://www.animegg.org/embed/3394",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6914/video.mp4?for=101794923643676",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6914/video.mp4?for=101794923643676"
+        },
+        "3": {
+          "title": "Bleach Episode 3",
+          "embed_id": "3392",
+          "embed_url": "https://www.animegg.org/embed/3392",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/151265/video.mp4?for=101794923645008",
+              "backup": "http://mp4upload.com/embed-ba7suq0dooxy-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/151265/video.mp4?for=101794923645008"
+        },
+        "4": {
+          "title": "Bleach Episode 4",
+          "embed_id": "3390",
+          "embed_url": "https://www.animegg.org/embed/3390",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6906/video.mp4?for=101794923647485",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6906/video.mp4?for=101794923647485"
+        },
+        "5": {
+          "title": "Bleach Episode 5",
+          "embed_id": "3388",
+          "embed_url": "https://www.animegg.org/embed/3388",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6902/video.mp4?for=101794923649885",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6902/video.mp4?for=101794923649885"
+        }
+      }
+    },
+    "1535": {
+      "slug": "death-note",
+      "anilist_id": 1535,
+      "mal_id": 1535,
+      "total_episodes": 37,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Death Note Episode 1",
+          "embed_id": "7455",
+          "embed_url": "https://www.animegg.org/embed/7455",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15143/video.mp4?for=101794923653714",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15143/video.mp4?for=101794923653714"
+        },
+        "2": {
+          "title": "Death Note Episode 2",
+          "embed_id": "7457",
+          "embed_url": "https://www.animegg.org/embed/7457",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15147/video.mp4?for=101794923655265",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/223180/video.mp4?for=101794923655265",
+              "backup": "https://mp4upload.com/embed-xvku3mwjgw7h.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/223182/video.mp4?for=101794923655265",
+              "backup": "https://mp4upload.com/embed-79fh432ihesh.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/223188/video.mp4?for=101794923655266",
+              "backup": "https://mp4upload.com/embed-xpzg3logtk9g.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15147/video.mp4?for=101794923655265"
+        },
+        "3": {
+          "title": "Death Note Episode 3",
+          "embed_id": "7451",
+          "embed_url": "https://www.animegg.org/embed/7451",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15135/video.mp4?for=101794923656668",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15135/video.mp4?for=101794923656668"
+        },
+        "4": {
+          "title": "Death Note Episode 4",
+          "embed_id": "7453",
+          "embed_url": "https://www.animegg.org/embed/7453",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15139/video.mp4?for=101794923658539",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15139/video.mp4?for=101794923658539"
+        },
+        "5": {
+          "title": "Death Note Episode 5",
+          "embed_id": "7449",
+          "embed_url": "https://www.animegg.org/embed/7449",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15131/video.mp4?for=101794923661504",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15131/video.mp4?for=101794923661504"
+        }
+      }
+    },
+    "1735": {
+      "slug": "naruto-shippuden",
+      "anilist_id": 1735,
+      "mal_id": 1735,
+      "total_episodes": 494,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Naruto Shippuden Episode 1",
+          "embed_id": "26743",
+          "embed_url": "https://www.animegg.org/embed/26743",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/54112/video.mp4?for=101794923666392",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213281/video.mp4?for=101794923666396",
+              "backup": "https://mp4upload.com/embed-r4650spcyagi.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/54112/video.mp4?for=101794923666392"
+        },
+        "2": {
+          "title": "Naruto Shippuden Episode 2",
+          "embed_id": "26745",
+          "embed_url": "https://www.animegg.org/embed/26745",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/54116/video.mp4?for=101794923671672",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213679/video.mp4?for=101794923671674",
+              "backup": "https://mp4upload.com/embed-v69h15oyrh32.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/54116/video.mp4?for=101794923671672"
+        },
+        "3": {
+          "title": "Naruto Shippuden Episode 3",
+          "embed_id": "26284",
+          "embed_url": "https://www.animegg.org/embed/26284",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53194/video.mp4?for=101794923673736",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214075/video.mp4?for=101794923673761",
+              "backup": "https://mp4upload.com/embed-wz9kz2dmexng.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53194/video.mp4?for=101794923673736"
+        },
+        "4": {
+          "title": "Naruto Shippuden Episode 4",
+          "embed_id": "26278",
+          "embed_url": "https://www.animegg.org/embed/26278",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53182/video.mp4?for=101794923675202",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214445/video.mp4?for=101794923675205",
+              "backup": "https://mp4upload.com/embed-0q7qfv9n1psx.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53182/video.mp4?for=101794923675202"
+        },
+        "5": {
+          "title": "Naruto Shippuden Episode 5",
+          "embed_id": "26276",
+          "embed_url": "https://www.animegg.org/embed/26276",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53178/video.mp4?for=101794923677032",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214633/video.mp4?for=101794923677042",
+              "backup": "https://mp4upload.com/embed-s63mlpun96f7.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53178/video.mp4?for=101794923677032"
+        }
+      }
+    },
+    "5114": {
+      "slug": "fullmetal-alchemist-brotherhood",
+      "anilist_id": 5114,
+      "mal_id": 5114,
+      "total_episodes": 0,
+      "scraped_episodes": 0,
+      "episodes": {}
+    },
+    "9253": {
+      "slug": "steinsgate",
+      "anilist_id": 9253,
+      "mal_id": 9253,
+      "total_episodes": 0,
+      "scraped_episodes": 0,
+      "episodes": {}
+    },
+    "11061": {
+      "slug": "hunter-x-hunter-2011",
+      "anilist_id": 11061,
+      "mal_id": 11061,
+      "total_episodes": 148,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Hunter x Hunter (2011) Episode 1",
+          "embed_id": "16997",
+          "embed_url": "https://www.animegg.org/embed/16997",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34181/video.mp4?for=101794923685904",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34181/video.mp4?for=101794923685904"
+        },
+        "2": {
+          "title": "Hunter x Hunter (2011) Episode 2",
+          "embed_id": "16996",
+          "embed_url": "https://www.animegg.org/embed/16996",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34179/video.mp4?for=101794923687680",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211434/video.mp4?for=101794923687703",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_194411938032757_4819402735784820736_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=525&oh=6ab1a340cb001b0b3e9f607088dc013d&oe=5B66BEEB"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34179/video.mp4?for=101794923687680"
+        },
+        "3": {
+          "title": "Hunter x Hunter (2011) Episode 3",
+          "embed_id": "16995",
+          "embed_url": "https://www.animegg.org/embed/16995",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34177/video.mp4?for=101794923689531",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/227697/video.mp4?for=101794923689531",
+              "backup": "https://mp4upload.com/embed-4m1zh5zu7gdr.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/227711/video.mp4?for=101794923689539",
+              "backup": "https://mp4upload.com/embed-c6ibjvg5ksaq.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34177/video.mp4?for=101794923689531"
+        },
+        "4": {
+          "title": "Hunter x Hunter (2011) Episode 4",
+          "embed_id": "16993",
+          "embed_url": "https://www.animegg.org/embed/16993",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34173/video.mp4?for=101794923690596",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211438/video.mp4?for=101794923690597",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_987654241398944_5840781460973289472_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=901&oh=faa16589b1f6de3759c69d8d6d040af9&oe=5B663F67"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34173/video.mp4?for=101794923690596"
+        },
+        "5": {
+          "title": "Hunter x Hunter (2011) Episode 5",
+          "embed_id": "16994",
+          "embed_url": "https://www.animegg.org/embed/16994",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34175/video.mp4?for=101794923691728",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211442/video.mp4?for=101794923691728",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_449313078860348_7229465570272346112_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=676&oh=221f8febe3c1c9a1f82c815278840ad4&oe=5B67883A"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34175/video.mp4?for=101794923691728"
+        }
+      }
+    },
+    "11757": {
+      "slug": "sword-art-online",
+      "anilist_id": 11757,
+      "mal_id": 11757,
+      "total_episodes": 25,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Sword Art Online Episode 1",
+          "embed_id": "36931",
+          "embed_url": "https://www.animegg.org/embed/36931",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71686/video.mp4?for=101794923695328",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71686/video.mp4?for=101794923695328"
+        },
+        "2": {
+          "title": "Sword Art Online Episode 2",
+          "embed_id": "36921",
+          "embed_url": "https://www.animegg.org/embed/36921",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71666/video.mp4?for=101794923699170",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71666/video.mp4?for=101794923699170"
+        },
+        "3": {
+          "title": "Sword Art Online Episode 3",
+          "embed_id": "36917",
+          "embed_url": "https://www.animegg.org/embed/36917",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71658/video.mp4?for=101794923700248",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71658/video.mp4?for=101794923700248"
+        },
+        "4": {
+          "title": "Sword Art Online Episode 4",
+          "embed_id": "36919",
+          "embed_url": "https://www.animegg.org/embed/36919",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71662/video.mp4?for=101794923701244",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71662/video.mp4?for=101794923701244"
+        },
+        "5": {
+          "title": "Sword Art Online Episode 16.5",
+          "embed_id": "75960",
+          "embed_url": "https://www.animegg.org/embed/75960",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/144570/video.mp4?for=101794923702242",
+              "backup": "http://mp4upload.com/embed-8u2jw636f5o1-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/144570/video.mp4?for=101794923702242"
+        }
+      }
+    },
+    "16498": {
+      "slug": "attack-on-titan",
+      "anilist_id": 16498,
+      "mal_id": 16498,
+      "total_episodes": 26,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Attack on Titan Episode 1",
+          "embed_id": "34604",
+          "embed_url": "https://www.animegg.org/embed/34604",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67942/video.mp4?for=101794923704357",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67942/video.mp4?for=101794923704357"
+        },
+        "2": {
+          "title": "Attack on Titan Episode 2",
+          "embed_id": "34600",
+          "embed_url": "https://www.animegg.org/embed/34600",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67934/video.mp4?for=101794923705624",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67934/video.mp4?for=101794923705624"
+        },
+        "3": {
+          "title": "Attack on Titan Episode 3",
+          "embed_id": "34602",
+          "embed_url": "https://www.animegg.org/embed/34602",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/145855/video.mp4?for=101794923707557",
+              "backup": "http://mp4upload.com/embed-hlzugw8lbju2-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/145855/video.mp4?for=101794923707557"
+        },
+        "4": {
+          "title": "Attack on Titan Episode 4",
+          "embed_id": "34606",
+          "embed_url": "https://www.animegg.org/embed/34606",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67946/video.mp4?for=101794923712331",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67946/video.mp4?for=101794923712331"
+        },
+        "5": {
+          "title": "Attack on Titan Episode 5",
+          "embed_id": "34608",
+          "embed_url": "https://www.animegg.org/embed/34608",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67950/video.mp4?for=101794923719434",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/238620/video.mp4?for=101794923719439",
+              "backup": "https://mp4upload.com/embed-s90hzorjg451-650x370.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/221572/video.mp4?for=101794923719480",
+              "backup": "https://mp4upload.com/embed-1bzll0dthb9h.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67950/video.mp4?for=101794923719434"
+        }
+      }
+    }
+  },
+  "by_slug": {
+    "naruto": {
+      "slug": "naruto",
+      "anilist_id": 20,
+      "mal_id": 20,
+      "total_episodes": 214,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Naruto Episode 1",
+          "embed_id": "25881",
+          "embed_url": "https://www.animegg.org/embed/25881",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/248322/video.mp4?for=101794923601002",
+              "backup": "https://www.mp4upload.com/embed-oowvlwkkencd.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/248322/video.mp4?for=101794923601002"
+        },
+        "2": {
+          "title": "Naruto Episode 2",
+          "embed_id": "25883",
+          "embed_url": "https://www.animegg.org/embed/25883",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/248340/video.mp4?for=101794923605453",
+              "backup": "https://www.mp4upload.com/embed-kkm9ndblaikd.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/248340/video.mp4?for=101794923605453"
+        },
+        "3": {
+          "title": "Naruto Episode 3",
+          "embed_id": "25877",
+          "embed_url": "https://www.animegg.org/embed/25877",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52378/video.mp4?for=101794923607278",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213141/video.mp4?for=101794923607278",
+              "backup": "https://mp4upload.com/embed-87jffxz5l0rs.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52378/video.mp4?for=101794923607278"
+        },
+        "4": {
+          "title": "Naruto Episode 4",
+          "embed_id": "25875",
+          "embed_url": "https://www.animegg.org/embed/25875",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52374/video.mp4?for=101794923612535",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213165/video.mp4?for=101794923612561",
+              "backup": "https://mp4upload.com/embed-hpvgja2oeouh.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52374/video.mp4?for=101794923612535"
+        },
+        "5": {
+          "title": "Naruto Episode 5",
+          "embed_id": "25873",
+          "embed_url": "https://www.animegg.org/embed/25873",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/52370/video.mp4?for=101794923618526",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213185/video.mp4?for=101794923618559",
+              "backup": "https://mp4upload.com/embed-rofkihri1x2l.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/52370/video.mp4?for=101794923618526"
+        }
+      }
+    },
+    "one-piece": {
+      "slug": "one-piece",
+      "anilist_id": 21,
+      "mal_id": 21,
+      "total_episodes": 1164,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "One Piece Episode 1",
+          "embed_id": "27657",
+          "embed_url": "https://www.animegg.org/embed/27657",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55976/video.mp4?for=101794923621720",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/240624/video.mp4?for=101794923621726",
+              "backup": "https://mp4upload.com/embed-0bu9blvhk1a8.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/240656/video.mp4?for=101794923621743",
+              "backup": "https://mp4upload.com/embed-peda0hgmnkjd.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/240636/video.mp4?for=101794923621750",
+              "backup": "https://mp4upload.com/embed-3pp6895rrjsr.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55976/video.mp4?for=101794923621720"
+        },
+        "2": {
+          "title": "One Piece Episode 2",
+          "embed_id": "27647",
+          "embed_url": "https://www.animegg.org/embed/27647",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55956/video.mp4?for=101794923357080",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241120/video.mp4?for=101794923357080",
+              "backup": "https://mp4upload.com/embed-wwfu2baijbw5.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/241186/video.mp4?for=101794923357081",
+              "backup": "https://mp4upload.com/embed-5o1gy3w2pgqd.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241146/video.mp4?for=101794923357081",
+              "backup": "https://mp4upload.com/embed-7l251136ll9r.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55956/video.mp4?for=101794923357080"
+        },
+        "3": {
+          "title": "One Piece Episode 3",
+          "embed_id": "27639",
+          "embed_url": "https://www.animegg.org/embed/27639",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55940/video.mp4?for=101794923625266",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241416/video.mp4?for=101794923625271",
+              "backup": "https://mp4upload.com/embed-n2sk6dktla53.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/243548/video.mp4?for=101794923625273",
+              "backup": "https://mp4upload.com/embed-jwx7r25afjbe.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241434/video.mp4?for=101794923625277",
+              "backup": "https://mp4upload.com/embed-dyrzh5zby1to.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55940/video.mp4?for=101794923625266"
+        },
+        "4": {
+          "title": "One Piece Episode 4",
+          "embed_id": "27643",
+          "embed_url": "https://www.animegg.org/embed/27643",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55948/video.mp4?for=101794923628649",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/241744/video.mp4?for=101794923628667",
+              "backup": "https://mp4upload.com/embed-pr4gt8vqw6yv.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/244192/video.mp4?for=101794923628676",
+              "backup": "https://mp4upload.com/embed-opllisugk3uh.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/241768/video.mp4?for=101794923628691",
+              "backup": "https://mp4upload.com/embed-36z66lj2b4sq.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55948/video.mp4?for=101794923628649"
+        },
+        "5": {
+          "title": "One Piece Episode 5",
+          "embed_id": "27641",
+          "embed_url": "https://www.animegg.org/embed/27641",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/55944/video.mp4?for=101794923630116",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/242948/video.mp4?for=101794923630122",
+              "backup": "https://mp4upload.com/embed-vq2wsgd50y0r.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/244214/video.mp4?for=101794923630131",
+              "backup": "https://mp4upload.com/embed-guy4b1jfstez.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/242108/video.mp4?for=101794923630136",
+              "backup": "https://mp4upload.com/embed-fihjbban9k5v.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/55944/video.mp4?for=101794923630116"
+        },
+        "1160": {
+          "title": "One Piece Episode 1160",
+          "embed_id": "145627",
+          "embed_url": "https://www.animegg.org/embed/145627",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/542380/video.mp4?for=101794978293475",
+              "backup": "http://spiderdrone.cdn.oose.io:8585/f572689ee7b33e8cf5186cbcbc4dc4f5"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/542383/video.mp4?for=101794978293892",
+              "backup": "http://spiderdrone.cdn.oose.io:8585/17810c9007ab92218e63af8d69c8fb51"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/542384/video.mp4?for=101794978294077",
+              "backup": "http://spiderdrone.cdn.oose.io:8585/d75eb0b8a2520c654dcc06535c1bf419"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/542380/video.mp4?for=101794978293475"
+        }
+      }
+    },
+    "bleach": {
+      "slug": "bleach",
+      "anilist_id": 269,
+      "mal_id": 269,
+      "total_episodes": 366,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Bleach Episode 1",
+          "embed_id": "3398",
+          "embed_url": "https://www.animegg.org/embed/3398",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6922/video.mp4?for=101794923640911",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6922/video.mp4?for=101794923640911"
+        },
+        "2": {
+          "title": "Bleach Episode 2",
+          "embed_id": "3394",
+          "embed_url": "https://www.animegg.org/embed/3394",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6914/video.mp4?for=101794923643676",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6914/video.mp4?for=101794923643676"
+        },
+        "3": {
+          "title": "Bleach Episode 3",
+          "embed_id": "3392",
+          "embed_url": "https://www.animegg.org/embed/3392",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/151265/video.mp4?for=101794923645008",
+              "backup": "http://mp4upload.com/embed-ba7suq0dooxy-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/151265/video.mp4?for=101794923645008"
+        },
+        "4": {
+          "title": "Bleach Episode 4",
+          "embed_id": "3390",
+          "embed_url": "https://www.animegg.org/embed/3390",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6906/video.mp4?for=101794923647485",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6906/video.mp4?for=101794923647485"
+        },
+        "5": {
+          "title": "Bleach Episode 5",
+          "embed_id": "3388",
+          "embed_url": "https://www.animegg.org/embed/3388",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/6902/video.mp4?for=101794923649885",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/6902/video.mp4?for=101794923649885"
+        }
+      }
+    },
+    "death-note": {
+      "slug": "death-note",
+      "anilist_id": 1535,
+      "mal_id": 1535,
+      "total_episodes": 37,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Death Note Episode 1",
+          "embed_id": "7455",
+          "embed_url": "https://www.animegg.org/embed/7455",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15143/video.mp4?for=101794923653714",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15143/video.mp4?for=101794923653714"
+        },
+        "2": {
+          "title": "Death Note Episode 2",
+          "embed_id": "7457",
+          "embed_url": "https://www.animegg.org/embed/7457",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15147/video.mp4?for=101794923655265",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/223180/video.mp4?for=101794923655265",
+              "backup": "https://mp4upload.com/embed-xvku3mwjgw7h.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/223182/video.mp4?for=101794923655265",
+              "backup": "https://mp4upload.com/embed-79fh432ihesh.html"
+            },
+            {
+              "quality": "1080p",
+              "url": "https://www.animegg.org/play/223188/video.mp4?for=101794923655266",
+              "backup": "https://mp4upload.com/embed-xpzg3logtk9g.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15147/video.mp4?for=101794923655265"
+        },
+        "3": {
+          "title": "Death Note Episode 3",
+          "embed_id": "7451",
+          "embed_url": "https://www.animegg.org/embed/7451",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15135/video.mp4?for=101794923656668",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15135/video.mp4?for=101794923656668"
+        },
+        "4": {
+          "title": "Death Note Episode 4",
+          "embed_id": "7453",
+          "embed_url": "https://www.animegg.org/embed/7453",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15139/video.mp4?for=101794923658539",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15139/video.mp4?for=101794923658539"
+        },
+        "5": {
+          "title": "Death Note Episode 5",
+          "embed_id": "7449",
+          "embed_url": "https://www.animegg.org/embed/7449",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/15131/video.mp4?for=101794923661504",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/15131/video.mp4?for=101794923661504"
+        }
+      }
+    },
+    "naruto-shippuden": {
+      "slug": "naruto-shippuden",
+      "anilist_id": 1735,
+      "mal_id": 1735,
+      "total_episodes": 494,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Naruto Shippuden Episode 1",
+          "embed_id": "26743",
+          "embed_url": "https://www.animegg.org/embed/26743",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/54112/video.mp4?for=101794923666392",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213281/video.mp4?for=101794923666396",
+              "backup": "https://mp4upload.com/embed-r4650spcyagi.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/54112/video.mp4?for=101794923666392"
+        },
+        "2": {
+          "title": "Naruto Shippuden Episode 2",
+          "embed_id": "26745",
+          "embed_url": "https://www.animegg.org/embed/26745",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/54116/video.mp4?for=101794923671672",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/213679/video.mp4?for=101794923671674",
+              "backup": "https://mp4upload.com/embed-v69h15oyrh32.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/54116/video.mp4?for=101794923671672"
+        },
+        "3": {
+          "title": "Naruto Shippuden Episode 3",
+          "embed_id": "26284",
+          "embed_url": "https://www.animegg.org/embed/26284",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53194/video.mp4?for=101794923673736",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214075/video.mp4?for=101794923673761",
+              "backup": "https://mp4upload.com/embed-wz9kz2dmexng.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53194/video.mp4?for=101794923673736"
+        },
+        "4": {
+          "title": "Naruto Shippuden Episode 4",
+          "embed_id": "26278",
+          "embed_url": "https://www.animegg.org/embed/26278",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53182/video.mp4?for=101794923675202",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214445/video.mp4?for=101794923675205",
+              "backup": "https://mp4upload.com/embed-0q7qfv9n1psx.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53182/video.mp4?for=101794923675202"
+        },
+        "5": {
+          "title": "Naruto Shippuden Episode 5",
+          "embed_id": "26276",
+          "embed_url": "https://www.animegg.org/embed/26276",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/53178/video.mp4?for=101794923677032",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/214633/video.mp4?for=101794923677042",
+              "backup": "https://mp4upload.com/embed-s63mlpun96f7.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/53178/video.mp4?for=101794923677032"
+        }
+      }
+    },
+    "fullmetal-alchemist-brotherhood": {
+      "slug": "fullmetal-alchemist-brotherhood",
+      "anilist_id": 5114,
+      "mal_id": 5114,
+      "total_episodes": 0,
+      "scraped_episodes": 0,
+      "episodes": {}
+    },
+    "steinsgate": {
+      "slug": "steinsgate",
+      "anilist_id": 9253,
+      "mal_id": 9253,
+      "total_episodes": 0,
+      "scraped_episodes": 0,
+      "episodes": {}
+    },
+    "hunter-x-hunter-2011": {
+      "slug": "hunter-x-hunter-2011",
+      "anilist_id": 11061,
+      "mal_id": 11061,
+      "total_episodes": 148,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Hunter x Hunter (2011) Episode 1",
+          "embed_id": "16997",
+          "embed_url": "https://www.animegg.org/embed/16997",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34181/video.mp4?for=101794923685904",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34181/video.mp4?for=101794923685904"
+        },
+        "2": {
+          "title": "Hunter x Hunter (2011) Episode 2",
+          "embed_id": "16996",
+          "embed_url": "https://www.animegg.org/embed/16996",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34179/video.mp4?for=101794923687680",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211434/video.mp4?for=101794923687703",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_194411938032757_4819402735784820736_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=525&oh=6ab1a340cb001b0b3e9f607088dc013d&oe=5B66BEEB"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34179/video.mp4?for=101794923687680"
+        },
+        "3": {
+          "title": "Hunter x Hunter (2011) Episode 3",
+          "embed_id": "16995",
+          "embed_url": "https://www.animegg.org/embed/16995",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34177/video.mp4?for=101794923689531",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/227697/video.mp4?for=101794923689531",
+              "backup": "https://mp4upload.com/embed-4m1zh5zu7gdr.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/227711/video.mp4?for=101794923689539",
+              "backup": "https://mp4upload.com/embed-c6ibjvg5ksaq.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34177/video.mp4?for=101794923689531"
+        },
+        "4": {
+          "title": "Hunter x Hunter (2011) Episode 4",
+          "embed_id": "16993",
+          "embed_url": "https://www.animegg.org/embed/16993",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34173/video.mp4?for=101794923690596",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211438/video.mp4?for=101794923690597",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_987654241398944_5840781460973289472_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=901&oh=faa16589b1f6de3759c69d8d6d040af9&oe=5B663F67"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34173/video.mp4?for=101794923690596"
+        },
+        "5": {
+          "title": "Hunter x Hunter (2011) Episode 5",
+          "embed_id": "16994",
+          "embed_url": "https://www.animegg.org/embed/16994",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/34175/video.mp4?for=101794923691728",
+              "backup": null
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/211442/video.mp4?for=101794923691728",
+              "backup": "https://video.xx.fbcdn.net/v/t42.9040-2/10000000_449313078860348_7229465570272346112_n.mp4?_nc_cat=0&efg=eyJybHIiOjE1MDAsInJsYSI6NDA5NiwidmVuY29kZV90YWciOiJzdmVfaGQifQ%3D%3D&rl=1500&vabr=676&oh=221f8febe3c1c9a1f82c815278840ad4&oe=5B67883A"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/34175/video.mp4?for=101794923691728"
+        }
+      }
+    },
+    "sword-art-online": {
+      "slug": "sword-art-online",
+      "anilist_id": 11757,
+      "mal_id": 11757,
+      "total_episodes": 25,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Sword Art Online Episode 1",
+          "embed_id": "36931",
+          "embed_url": "https://www.animegg.org/embed/36931",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71686/video.mp4?for=101794923695328",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71686/video.mp4?for=101794923695328"
+        },
+        "2": {
+          "title": "Sword Art Online Episode 2",
+          "embed_id": "36921",
+          "embed_url": "https://www.animegg.org/embed/36921",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71666/video.mp4?for=101794923699170",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71666/video.mp4?for=101794923699170"
+        },
+        "3": {
+          "title": "Sword Art Online Episode 3",
+          "embed_id": "36917",
+          "embed_url": "https://www.animegg.org/embed/36917",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71658/video.mp4?for=101794923700248",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71658/video.mp4?for=101794923700248"
+        },
+        "4": {
+          "title": "Sword Art Online Episode 4",
+          "embed_id": "36919",
+          "embed_url": "https://www.animegg.org/embed/36919",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/71662/video.mp4?for=101794923701244",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/71662/video.mp4?for=101794923701244"
+        },
+        "5": {
+          "title": "Sword Art Online Episode 16.5",
+          "embed_id": "75960",
+          "embed_url": "https://www.animegg.org/embed/75960",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/144570/video.mp4?for=101794923702242",
+              "backup": "http://mp4upload.com/embed-8u2jw636f5o1-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/144570/video.mp4?for=101794923702242"
+        }
+      }
+    },
+    "attack-on-titan": {
+      "slug": "attack-on-titan",
+      "anilist_id": 16498,
+      "mal_id": 16498,
+      "total_episodes": 26,
+      "scraped_episodes": 5,
+      "episodes": {
+        "1": {
+          "title": "Attack on Titan Episode 1",
+          "embed_id": "34604",
+          "embed_url": "https://www.animegg.org/embed/34604",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67942/video.mp4?for=101794923704357",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67942/video.mp4?for=101794923704357"
+        },
+        "2": {
+          "title": "Attack on Titan Episode 2",
+          "embed_id": "34600",
+          "embed_url": "https://www.animegg.org/embed/34600",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67934/video.mp4?for=101794923705624",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67934/video.mp4?for=101794923705624"
+        },
+        "3": {
+          "title": "Attack on Titan Episode 3",
+          "embed_id": "34602",
+          "embed_url": "https://www.animegg.org/embed/34602",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/145855/video.mp4?for=101794923707557",
+              "backup": "http://mp4upload.com/embed-hlzugw8lbju2-650x370.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/145855/video.mp4?for=101794923707557"
+        },
+        "4": {
+          "title": "Attack on Titan Episode 4",
+          "embed_id": "34606",
+          "embed_url": "https://www.animegg.org/embed/34606",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67946/video.mp4?for=101794923712331",
+              "backup": null
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67946/video.mp4?for=101794923712331"
+        },
+        "5": {
+          "title": "Attack on Titan Episode 5",
+          "embed_id": "34608",
+          "embed_url": "https://www.animegg.org/embed/34608",
+          "audio": "sub",
+          "sources": [
+            {
+              "quality": "360p",
+              "url": "https://www.animegg.org/play/67950/video.mp4?for=101794923719434",
+              "backup": null
+            },
+            {
+              "quality": "480p",
+              "url": "https://www.animegg.org/play/238620/video.mp4?for=101794923719439",
+              "backup": "https://mp4upload.com/embed-s90hzorjg451-650x370.html"
+            },
+            {
+              "quality": "720p",
+              "url": "https://www.animegg.org/play/221572/video.mp4?for=101794923719480",
+              "backup": "https://mp4upload.com/embed-1bzll0dthb9h.html"
+            }
+          ],
+          "stream_url": "https://www.animegg.org/play/67950/video.mp4?for=101794923719434"
+        }
+      }
+    }
+  }
+}

@@ -309,7 +309,8 @@ export async function handleStream(anilistId, audio, epNum, request = null, env 
     headers: {
       "User-Agent": request?.headers?.get("User-Agent") || UA,
       Accept: "*/*",
-      Referer: `${SITE}/`,
+      Referer: request?.headers?.get("Referer") || `${SITE}/`,
+      Origin: request?.headers?.get("Origin") || `https://${reqHost}`,
     },
   });
 
