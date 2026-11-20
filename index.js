@@ -15,6 +15,7 @@ import anipmHandler                from "./providers/anipm.js";
 import anipmbetaHandler            from "./providers/anipmbeta.js";
 import anicloverHandler            from "./providers/aniclover.js";
 import gotakuHandler               from "./providers/gotaku.js";
+import zokoHandler                 from "./providers/zoko.js";
 import { getEpisodesResponse, getFilteredEpisodesResponse } from "./core/episode-cache.js";
 import { resolveProviders }         from "./core/episode-strategy.js";
 import { getAsync, setAsync, isFresh, mapTTL, WATCH_TTL, _CACHE_ENABLED } from "./core/smartcache.js";
@@ -377,6 +378,40 @@ export default {
     m = path.match(/^\/episodes\/gotaku\/([a-zA-Z0-9_-]+)\/?$/);
     if (m) {
       return gotakuHandler.fetch(request);
+    }
+
+    // Zoko (ZokoEmbed MAL-based, alias hianime) routes
+    m = path.match(/^\/watch\/(?:zoko|hianime)\/(\d+)\/(sub|dub)\/(?:zoko-|hianime-)?(\d+)\/?$/);
+    if (m) {
+      const [, id, audio, ep] = m;
+      return cachedWatch(
+        `watch:zoko:${id}:${audio}:${ep}`,
+        () => zokoHandler.fetch(request)
+      );
+    }
+
+    m = path.match(/^\/watch\/(?:zoko|hianime)\/(\d+)\/(?:zoko-|hianime-)?(\d+)\/?$/);
+    if (m) {
+      const [, id, ep] = m;
+      return cachedWatch(
+        `watch:zoko:${id}:sub:${ep}`,
+        () => zokoHandler.fetch(request)
+      );
+    }
+
+    m = path.match(/^\/stream\/(?:zoko|hianime)\/(\d+)\/(sub|dub)\/(\d+)\/?$/);
+    if (m) {
+      return zokoHandler.fetch(request);
+    }
+
+    m = path.match(/^\/stream\/(?:zoko|hianime)\/(\d+)\/(\d+)\/?$/);
+    if (m) {
+      return zokoHandler.fetch(request);
+    }
+
+    m = path.match(/^\/episodes\/(?:zoko|hianime)\/(\d+)\/?$/);
+    if (m) {
+      return zokoHandler.fetch(request);
     }
 
     return new Response(JSON.stringify({ error: "Not found" }), {

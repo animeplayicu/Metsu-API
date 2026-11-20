@@ -26,7 +26,31 @@ function loadAnimeggDb() {
     if (fs.existsSync(dbPath)) {
       const stat = fs.statSync(dbPath);
       if (stat.mtimeMs > lastDbMtime) {
-        ANIMEGG_DB = JSON.parse(fs.readFileSync(dbPath, "utf8"));
+        const raw = JSON.parse(fs.readFileSync(dbPath, "utf8"));
+        const by_slug = raw.by_slug || {};
+        const by_anilist = {};
+        const by_mal = {};
+
+        if (raw.by_anilist) {
+          for (const aid in raw.by_anilist) {
+            const val = raw.by_anilist[aid];
+            by_anilist[aid] = typeof val === "string" ? by_slug[val] : val;
+          }
+        }
+        if (raw.by_mal) {
+          for (const mid in raw.by_mal) {
+            const val = raw.by_mal[mid];
+            by_mal[mid] = typeof val === "string" ? by_slug[val] : val;
+          }
+        }
+
+        ANIMEGG_DB = {
+          updated_at: raw.updated_at,
+          total_anime: raw.total_anime || Object.keys(by_slug).length,
+          by_slug,
+          by_anilist,
+          by_mal,
+        };
         lastDbMtime = stat.mtimeMs;
       }
     }
@@ -258,6 +282,22 @@ async function resolveSeries(anilistId, ctx = {}) {
     return data;
   }
 
+  // 1.5 Database Lookup (Instant 0ms lookup from ANIMEGG_DB)
+  loadAnimeggDb();
+  const dbAnime = ANIMEGG_DB?.by_anilist?.[String(anilistId)] || (malId ? ANIMEGG_DB?.by_mal?.[String(malId)] : null);
+  if (dbAnime?.slug) {
+    const data = {
+      slug: dbAnime.slug,
+      title: dbAnime.title || media?.title?.romaji || media?.title?.english || dbAnime.slug,
+      mode: "local",
+      offset: 0,
+      score: 1.0,
+      source: "db_cache",
+    };
+    set(cacheKey, data, SHOW_IDENTITY_TTL);
+    return data;
+  }
+
   // 2. High-speed dynamic search
   const expected = expectedCount(media, ctx.anizip);
   const targetTitles = [
@@ -348,6 +388,33 @@ function buildEpisodeLists(anilistId, series, providerEpisodes, ctx, expected) {
 }
 
 export async function getEpisodes(anilistId, ctx = {}) {
+  loadAnimeggDb();
+  const dbAnime = ANIMEGG_DB?.by_anilist?.[String(anilistId)];
+  if (dbAnime?.episode_list && dbAnime.episode_list.length > 0) {
+    const media = ctx.media ?? await getMedia(anilistId).catch(() => null);
+    const localCtx = { ...ctx, media };
+    const expected = expectedCount(media, ctx.anizip);
+    const series = {
+      slug: dbAnime.slug,
+      title: dbAnime.title,
+      mode: "local",
+      offset: 0,
+      score: 1.0,
+      source: "animegg-db"
+    };
+    return {
+      meta: {
+        id: dbAnime.slug,
+        title: dbAnime.title,
+        source: "animegg-db",
+        matchScore: 1.0,
+        numbering: "local",
+        episodeOffset: 0,
+      },
+      episodes: buildEpisodeLists(anilistId, series, dbAnime.episode_list, localCtx, expected),
+    };
+  }
+
   const media = ctx.media ?? await getMedia(anilistId);
   const localCtx = { ...ctx, media };
   const series = await resolveSeries(anilistId, localCtx);
@@ -387,7 +454,7 @@ async function fetchAniSkip(malId, epNum) {
   }
 }
 
-async function handleWatch(anilistId, audio, epNum, ctx = {}) {
+export async function handleWatch(anilistId, audio, epNum, ctx = {}) {
   // ⚡ 1. SUB-20MS IN-MEMORY CACHE LOOKUP
   loadAnimeggDb();
   const cachedAnime = ANIMEGG_DB?.by_anilist?.[String(anilistId)] || ANIMEGG_DB?.by_mal?.[String(anilistId)];
@@ -515,7 +582,25 @@ async function handleWatch(anilistId, audio, epNum, ctx = {}) {
 
     // Save to disk asynchronously without slowing down client response
     const dbPath = path.resolve(process.cwd(), "data/animegg_database.json");
-    fs.promises.writeFile(dbPath, JSON.stringify(ANIMEGG_DB, null, 2), "utf8").catch(() => {});
+    const by_slug = ANIMEGG_DB.by_slug || {};
+    const by_anilist = {};
+    const by_mal = {};
+    for (const aid in ANIMEGG_DB.by_anilist) {
+      const entry = ANIMEGG_DB.by_anilist[aid];
+      if (entry?.slug) by_anilist[aid] = entry.slug;
+    }
+    for (const mid in ANIMEGG_DB.by_mal) {
+      const entry = ANIMEGG_DB.by_mal[mid];
+      if (entry?.slug) by_mal[mid] = entry.slug;
+    }
+    const payload = JSON.stringify({
+      updated_at: new Date().toISOString(),
+      total_anime: Object.keys(by_slug).length,
+      by_anilist,
+      by_mal,
+      by_slug
+    });
+    fs.promises.writeFile(dbPath, payload, "utf8").catch(() => {});
   } catch {}
 
   return json({

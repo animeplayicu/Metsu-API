@@ -17,6 +17,7 @@ import { getEpisodes as anipmEpisodes }      from "../providers/anipm.js";
 import { getEpisodes as anipmbetaEpisodes }  from "../providers/anipmbeta.js";
 import { getEpisodes as anicloverEpisodes }  from "../providers/aniclover.js";
 import { getEpisodes as gotakuEpisodes }     from "../providers/gotaku.js";
+import { getEpisodes as zokoEpisodes }       from "../providers/zoko.js";
 const inflight  = new Map();
 const bgRunning = new Set();
 
@@ -93,6 +94,9 @@ const PROVIDER_ALIASES = {
   anipmbeta: "anipmbeta",
   aniclover: "aniclover",
   gotaku: "gotaku",
+  zoko: "zoko",
+  zokoanime: "zoko",
+  hianime: "zoko",
 };
 
 export function resolveProviders(rawNames) {
@@ -123,6 +127,8 @@ function providerFns(anilistId, status, ctx) {
     anipmbeta:  () => withCache(`epv:anipmbeta:${anilistId}`,  status, () => anipmbetaEpisodes(anilistId, ctx)),
     aniclover:  () => withCache(`epv:aniclover:${anilistId}`,  status, () => anicloverEpisodes(anilistId, ctx)),
     gotaku:     () => withCache(`epv:gotaku:${anilistId}`,     status, () => gotakuEpisodes(anilistId, ctx)),
+    zoko:       () => withCache(`epv:zoko:${anilistId}`,       status, () => zokoEpisodes(anilistId, ctx)),
+    hianime:    () => withCache(`epv:zoko:${anilistId}`,       status, () => zokoEpisodes(anilistId, ctx)),
   };
 }
 

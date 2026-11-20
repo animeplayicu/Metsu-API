@@ -25,7 +25,8 @@ const IS_LOCAL_NODE = (() => {
     return (
       typeof process !== "undefined" &&
       typeof process.versions?.node === "string" &&
-      !process.env.VERCEL
+      !process.env.VERCEL &&
+      envBool("DISK_CACHE_ENABLED", false)
     );
   } catch { return false; }
 })();
