@@ -174,13 +174,13 @@ async function scrapeEpisodeWatch(epSlug, audio) {
       const ref = `${new URL(tab.embedUrl).origin}/`;
       const proxied = `/proxy?url=${encodeURIComponent(s.url)}&ref=${encodeURIComponent(ref)}`;
       const streamObj = {
-        url: proxied,
+        url: s.url,
         raw_url: s.url,
         proxied_url: proxied,
         type: s.url.includes(".m3u8") ? "hls" : "mp4",
         quality: s.quality,
-        backup: s.backup ? `/proxy?url=${encodeURIComponent(s.backup)}&ref=${encodeURIComponent(ref)}` : null,
-        raw_backup: s.backup,
+        backup: s.backup || null,
+        raw_backup: s.backup || null,
         audio: tab.normalized,
         server: tab.server,
         embed: tab.embedUrl,
@@ -189,7 +189,11 @@ async function scrapeEpisodeWatch(epSlug, audio) {
         isActive: i === 0 && j === 0,
       };
       if (s.backup && s.backup.startsWith("http")) {
-        streamObj.proxied_backup = `/proxy?url=${encodeURIComponent(s.backup)}&ref=${encodeURIComponent(ref)}`;
+        if (!s.backup.includes("embed")) {
+          streamObj.proxied_backup = `/proxy?url=${encodeURIComponent(s.backup)}&ref=${encodeURIComponent(ref)}`;
+        } else {
+          streamObj.backup_embed = s.backup;
+        }
       }
       return streamObj;
     });
@@ -464,13 +468,13 @@ export async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     const streams = (cachedEp.sources || []).map((s, j) => {
       const proxied = `/proxy?url=${encodeURIComponent(s.url)}&ref=${encodeURIComponent(ref)}`;
       return {
-        url: proxied,
+        url: s.url,
         raw_url: s.url,
         proxied_url: proxied,
         type: s.url.includes(".m3u8") ? "hls" : "mp4",
         quality: s.quality,
-        backup: s.backup ? `/proxy?url=${encodeURIComponent(s.backup)}&ref=${encodeURIComponent(ref)}` : null,
-        raw_backup: s.backup,
+        backup: s.backup || null,
+        raw_backup: s.backup || null,
         audio: cachedEp.audio || audio,
         server: "Animegg",
         embed: cachedEp.embed_url,
@@ -503,9 +507,9 @@ export async function handleWatch(anilistId, audio, epNum, ctx = {}) {
       title: cachedEp.title,
       intro: null,
       outro: null,
-      stream_url: topStream?.proxied_url || topStream?.url || null,
+      stream_url: topStream?.raw_url || topStream?.url || null,
       raw_stream_url: topStream?.raw_url || topStream?.url || null,
-      proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
+      proxied_stream_url: topStream?.proxied_url || null,
       streams,
       source: "animegg-cache",
     });
@@ -612,9 +616,9 @@ export async function handleWatch(anilistId, audio, epNum, ctx = {}) {
     title: watch.title,
     intro: aniSkipData?.intro ?? null,
     outro: aniSkipData?.outro ?? null,
-    stream_url: topStream?.proxied_url || topStream?.url || null,
+    stream_url: topStream?.raw_url || topStream?.url || null,
     raw_stream_url: topStream?.raw_url || topStream?.url || null,
-    proxied_stream_url: topStream?.proxied_url || topStream?.url || null,
+    proxied_stream_url: topStream?.proxied_url || null,
     streams: watch.streams,
   });
 }

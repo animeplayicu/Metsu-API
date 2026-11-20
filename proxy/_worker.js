@@ -488,6 +488,21 @@ async function handleRequest(request, env = {}, ctx = null) {
     return servePlayerUI(proxyOrigin, target, keyParam, refererParam);
   }
 
+  // Auto-unwrap nested or double-proxied URLs
+  while (target && (target.startsWith("/proxy?") || target.startsWith("proxy?") || target.includes("/proxy?url=") || target.includes("proxy?url="))) {
+    try {
+      const parsedNested = new URL(target, "http://localhost");
+      const inner = parsedNested.searchParams.get("url") || parsedNested.searchParams.get("target") || parsedNested.searchParams.get("src");
+      if (inner && inner !== target) {
+        target = inner;
+      } else {
+        break;
+      }
+    } catch {
+      break;
+    }
+  }
+
   // Base64 decode URL if needed (handles b64: or encoded query)
   if (target.startsWith("b64:")) {
     try {
@@ -1122,12 +1137,19 @@ function servePlayerUI(proxyOrigin, initialUrl = "", initialKey = "", initialRef
       const key = document.getElementById("key").value.trim();
       if (!rawUrl) return alert("Please enter an M3U8 URL");
 
-      const u = new URL(proxyBase + (proxyBase.endsWith("/") ? "" : "/"));
-      u.searchParams.set("url", rawUrl);
-      if (referer) u.searchParams.set("ref", referer);
-      if (key) u.searchParams.set("key", key);
+      let proxiedUrl;
+      if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+        const u = new URL(proxyBase + (proxyBase.endsWith("/") ? "" : "/"));
+        u.searchParams.set("url", rawUrl);
+        if (referer) u.searchParams.set("ref", referer);
+        if (key) u.searchParams.set("key", key);
+        proxiedUrl = u.toString();
+      } else if (rawUrl.startsWith("/proxy")) {
+        proxiedUrl = window.location.origin + rawUrl;
+      } else {
+        proxiedUrl = rawUrl;
+      }
 
-      const proxiedUrl = u.toString();
       document.getElementById("proxiedUrlDisplay").textContent = proxiedUrl;
       document.getElementById("outputBox").style.display = "block";
 
