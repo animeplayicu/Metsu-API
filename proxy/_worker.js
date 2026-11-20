@@ -82,6 +82,9 @@ async function getWreqFetch() {
   return _wreqFetch;
 }
 
+// In-memory cache for fast-path 302 redirects (e.g. AnimeGG -> vidcache storage origins)
+const redirectCache = new Map();
+
 /**
  * Unwrap Flixcloud PNG/WebP disguised & XOR-encrypted MPEG-TS chunks
  */
@@ -256,6 +259,22 @@ function detectDefaultHeaders(targetUrl) {
       extraHeaders: {
         "x-anitv-peek": "1",
       },
+    };
+  }
+
+  // Zoko / HiAnime (Dramahot / Drama1 CDN)
+  if (host.includes("dramahot.top") || host.includes("drama1.cfd") || host.includes("zokoanime")) {
+    return {
+      referer: "https://zokoanime.video/",
+      origin: "https://zokoanime.video",
+    };
+  }
+
+  // AnimeGG / Vidcache CDN
+  if (host.includes("animegg") || host.includes("vidcache.net")) {
+    return {
+      referer: "https://www.animegg.org/",
+      origin: "https://www.animegg.org",
     };
   }
 
@@ -577,13 +596,17 @@ async function handleRequest(request, env = {}, ctx = null) {
                    targetUrl.hostname.toLowerCase().includes("anipm") ||
                    targetUrl.hostname.toLowerCase().includes("cno.to");
 
+  // Fast-path for cached 302 redirects (e.g. AnimeGG -> vidcache storage origins)
+  const fastPathTarget = redirectCache.get(targetUrl.href);
+  let activeFetchUrl = fastPathTarget || targetUrl.href;
+
   let upstreamResponse;
   const wreq = await getWreqFetch();
 
   if (isCfHost && wreq) {
     try {
       const headersObj = Object.fromEntries(upstreamHeaders.entries());
-      upstreamResponse = await wreq(targetUrl.href, {
+      upstreamResponse = await wreq(activeFetchUrl, {
         method: request.method,
         headers: headersObj,
         redirect: "follow",
@@ -593,7 +616,7 @@ async function handleRequest(request, env = {}, ctx = null) {
 
   if (!upstreamResponse) {
     try {
-      upstreamResponse = await fetch(targetUrl.href, {
+      upstreamResponse = await fetch(activeFetchUrl, {
         method: request.method,
         headers: upstreamHeaders,
         redirect: "follow",
@@ -602,7 +625,7 @@ async function handleRequest(request, env = {}, ctx = null) {
       if (wreq) {
         try {
           const headersObj = Object.fromEntries(upstreamHeaders.entries());
-          upstreamResponse = await wreq(targetUrl.href, {
+          upstreamResponse = await wreq(activeFetchUrl, {
             method: request.method,
             headers: headersObj,
             redirect: "follow",
@@ -612,7 +635,7 @@ async function handleRequest(request, env = {}, ctx = null) {
             JSON.stringify({
               error: "Upstream fetch failed",
               details: wreqErr.message,
-              target: targetUrl.href,
+              target: activeFetchUrl,
             }),
             {
               status: 502,
@@ -625,7 +648,7 @@ async function handleRequest(request, env = {}, ctx = null) {
           JSON.stringify({
             error: "Upstream fetch failed",
             details: err.message,
-            target: targetUrl.href,
+            target: activeFetchUrl,
           }),
           {
             status: 502,
@@ -633,6 +656,27 @@ async function handleRequest(request, env = {}, ctx = null) {
           }
         );
       }
+    }
+  }
+
+  // If fast-path target failed or expired (e.g. 403, 404, 410), invalidate cache and re-fetch original target
+  if (fastPathTarget && (upstreamResponse.status === 403 || upstreamResponse.status === 404 || upstreamResponse.status === 410)) {
+    redirectCache.delete(targetUrl.href);
+    activeFetchUrl = targetUrl.href;
+    try {
+      upstreamResponse = await fetch(activeFetchUrl, {
+        method: request.method,
+        headers: upstreamHeaders,
+        redirect: "follow",
+      });
+    } catch {}
+  }
+
+  // Cache resolved 302 redirect destination to bypass origin latency on subsequent requests
+  if (upstreamResponse && upstreamResponse.url && upstreamResponse.url !== targetUrl.href && upstreamResponse.status < 400) {
+    redirectCache.set(targetUrl.href, upstreamResponse.url);
+    if (redirectCache.size > 2000) {
+      redirectCache.delete(redirectCache.keys().next().value);
     }
   }
 
@@ -1027,6 +1071,7 @@ function servePlayerUI(proxyOrigin, initialUrl = "", initialKey = "", initialRef
         <div class="form-group">
           <label for="quickProvider">Provider</label>
           <select id="quickProvider">
+            <option value="zoko" selected>Zoko (HiAnime MAL-based 1080p)</option>
             <option value="reanime">Reanime (Flixcloud Encrypted)</option>
             <option value="anikoto">Anikoto (Megaplay / HiAnime)</option>
             <option value="animegg">Animegg (Direct MP4)</option>
@@ -1117,7 +1162,7 @@ function servePlayerUI(proxyOrigin, initialUrl = "", initialKey = "", initialRef
         if (!streamUrl) throw new Error("No stream URL found in API response");
 
         const key = data.key || data.playlist_key || data.streams?.[0]?.playlist_key || data.streams?.[0]?.key || "";
-        const referer = (provider === "reanime") ? "https://flixcloud.cc/" : (provider === "animegg" ? "https://www.animegg.org/" : (data.streams?.[0]?.referer || data.headers?.Referer || "https://hianimes.re/"));
+        const referer = (provider === "zoko") ? "https://zokoanime.video/" : ((provider === "reanime") ? "https://flixcloud.cc/" : (provider === "animegg" ? "https://www.animegg.org/" : (data.streams?.[0]?.referer || data.headers?.Referer || "https://hianimes.re/")));
 
         document.getElementById("streamUrl").value = streamUrl;
         document.getElementById("key").value = key;

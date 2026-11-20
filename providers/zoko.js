@@ -107,6 +107,7 @@ export async function handleWatch(anilistOrMalId, audio = "sub", epNum = 1, ctx 
         quality: "1080p",
         url: rawStreamUrl,
         proxied_url: proxiedStreamUrl,
+        referer: `${BASE}/`,
         headers: {
           Referer: `${BASE}/`,
           "User-Agent": UA,
@@ -126,6 +127,7 @@ export async function handleWatch(anilistOrMalId, audio = "sub", epNum = 1, ctx 
       server: "Zoko HD",
       stream_url: rawStreamUrl,
       proxied_stream_url: proxiedStreamUrl,
+      referer: `${BASE}/`,
       intro,
       outro,
       poster,
